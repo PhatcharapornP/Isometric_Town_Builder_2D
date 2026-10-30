@@ -1,12 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
-using TouchPhase = UnityEngine.TouchPhase;
 
 public class TilemapUtils : MonoBehaviour
 {
@@ -44,19 +41,33 @@ public class TilemapUtils : MonoBehaviour
 
     private void DetectTouch()
     {
-        bool androidTouched = Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began;
-        if (androidTouched)
+        var touchscreen = Touchscreen.current;
+        if (touchscreen == null)
         {
-            Touch touch = Input.touches[0];
+            return;
+        }
+        var hasTouched = touchscreen.touches.Count > 0 && touchscreen.touches[0].press.wasPressedThisFrame;
+        // bool androidTouched = Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began;
+        if (hasTouched/*androidTouched*/)
+        {
+            // Touch touch = Input.touches[0];
             //camera z is -10
-            screenPos = new Vector3(touch.position.x, touch.position.y, 10f);
+            // screenPos = new Vector3(touch.position.x, touch.position.y, 10f);
+            
+            var screenPosition = touchscreen.touches[0].position.ReadValue();
+            screenPos = new Vector3(screenPosition.x, screenPosition.y, 10f);
             HandleOnClick();
         }
     }
 
     private void DetectMouseClick()
     {
-        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        if (Mouse.current == null)
+        {
+            return;
+        }
+        
+        if ( Mouse.current.leftButton.wasPressedThisFrame)
         {
             clickPos = Mouse.current.position.ReadValue();
             //camera z is -10
@@ -148,7 +159,7 @@ public class TilemapUtils : MonoBehaviour
             }
         }
 
-        string stringDebug = Newtonsoft.Json.JsonConvert.SerializeObject(counts);
+        string stringDebug = JsonConvert.SerializeObject(counts);
         Debug.Log($"{GetType().Name} -> stringDebug: {stringDebug}".LogColor(new Color(1f, 0.52f, 0.89f)));
     }
 
