@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13b75c95f34a00d4e8c04f76b73312e6, type: 3}
+  m_Name: coast-grass_144
+  m_EditorClassIdentifier: Unity.2D.Tilemap.Extras::UnityEngine.Tilemaps.AnimatedTile
+  m_AnimatedSprites:
+  - {fileID: 1247805808173478, guid: d63727f24c98cc44dcdff1a2bb0214d6, type: 3}
+  - {fileID: 1246006200098835, guid: d63727f24c98cc44dcdff1a2bb0214d6, type: 3}
+  - {fileID: 1251404957212288, guid: d63727f24c98cc44dcdff1a2bb0214d6, type: 3}
+  - {fileID: 1249605349137645, guid: d63727f24c98cc44dcdff1a2bb0214d6, type: 3}
+  - {fileID: 1255004106251098, guid: d63727f24c98cc44dcdff1a2bb0214d6, type: 3}
+  - {fileID: 1253204498176455, guid: d63727f24c98cc44dcdff1a2bb0214d6, type: 3}
+  - {fileID: 1258603255289908, guid: d63727f24c98cc44dcdff1a2bb0214d6, type: 3}
+  - {fileID: 1256803647215265, guid: d63727f24c98cc44dcdff1a2bb0214d6, type: 3}
+  - {fileID: 1262202672770622, guid: d63727f24c98cc44dcdff1a2bb0214d6, type: 3}
+  - {fileID: 1260403064695979, guid: d63727f24c98cc44dcdff1a2bb0214d6, type: 3}
+  - {fileID: 951849087915399, guid: d63727f24c98cc44dcdff1a2bb0214d6, type: 3}
+  - {fileID: 953648695990042, guid: d63727f24c98cc44dcdff1a2bb0214d6, type: 3}
+  m_MinSpeed: 8
+  m_MaxSpeed: 8
+  m_AnimationStartTime: 0
+  m_AnimationStartFrame: 0
+  m_TileColliderType: 0
+  m_TileAnimationFlags: 0

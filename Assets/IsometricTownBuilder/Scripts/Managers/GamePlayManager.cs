@@ -23,7 +23,8 @@ public class GamePlayManager : MonoBehaviour
     }
 
 
-#if true
+#if false
+    
     //for testing only with out playing only [for now]
     private void OnValidate()
     {
