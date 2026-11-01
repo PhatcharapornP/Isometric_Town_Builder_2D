@@ -6,8 +6,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+//TODO: Wanna DI this instead of just static value this class, but need to finish with other things first
+
 public class UtilPopup : MonoBehaviour
 {
+    public static UtilPopup Instance;
     [SerializeField] private TextMeshProUGUI headerText;
     [SerializeField] private TextMeshProUGUI contentText;
     [SerializeField] private Button clickAnywhereButton;
@@ -35,6 +38,7 @@ public class UtilPopup : MonoBehaviour
 
         EnableConfirmButton(popupDetails.OnClickAction != null || popupDetails.OnClickAsync != null);
         SetupPopupTextAndShow(popupDetails.Title, popupDetails.Message);
+        EnableClickAnywhereButton(true);
 
         async UniTask OnClickAsyncFunc(CancellationToken ct)
         {
@@ -70,6 +74,7 @@ public class UtilPopup : MonoBehaviour
         EnableConfirmButton(hasAnyConfirmAction);
         EnableCancelButton(hasAnyCancelAction);
         SetupPopupTextAndShow(popupDetails.Title, popupDetails.Message);
+        EnableClickAnywhereButton(true);
 
         async UniTask OnClickAsyncFuncOne(CancellationToken ct)
         {

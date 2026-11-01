@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class SoftLoad : MonoBehaviour
@@ -8,15 +7,23 @@ public class SoftLoad : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void ShowSoftLoad()
     {
-        
+        EnableSoftLoadObj(true);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void HideSoftLoad()
     {
+        EnableSoftLoadObj(false);
+    }
+
+    private void EnableSoftLoadObj(bool enable)
+    {
+        if (gameObject.activeSelf == enable)
+        {
+            return;
+        }
         
+        gameObject.SetActive(enable);
     }
 }

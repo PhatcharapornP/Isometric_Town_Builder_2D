@@ -1,25 +1,27 @@
 #nullable enable
-using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MainMenuUIManager : MonoBehaviour
 {
     //There's nothing for main menu right now but let's put a button for loading to next scene
 
-    [SerializeField] private Button goToGameplayScene;
+    [SerializeField] private GenericButton goToGameplayScene;
+    public GenericButton goToGameplaySceneButton => goToGameplayScene;
+}
 
-    private void Start()
+public static class LoadSceneUtil
+{
+    public static async UniTask GoToSceneAsync(string targetSceneName,string? unloadSceneName)
     {
-        Initialize();
-    }
-
-    private void Initialize()
-    {
-    }
-
-    private void GotoGameplayScene()
-    {
+        await SceneManager.LoadSceneAsync(targetSceneName);
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName(targetSceneName));
+        if (!string.IsNullOrEmpty(unloadSceneName))
+        {
+            await SceneManager.UnloadSceneAsync(unloadSceneName);    
+        }
         
+        await Resources.UnloadUnusedAssets();
     }
 }
