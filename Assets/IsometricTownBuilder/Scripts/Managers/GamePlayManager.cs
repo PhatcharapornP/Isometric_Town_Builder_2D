@@ -4,10 +4,7 @@ using UnityEngine.Serialization;
 
 public class GamePlayManager : MonoBehaviour
 {
-    [Header("GameConfigs")] 
-    [SerializeField] private GameConfigContainer gameConfigContainer;
     
-    [SerializeField] private BoardManager boardManager = new BoardManager();
     
     [Space,Header("testing input")]
     [SerializeField] private Vector2Int gridPosition = Vector2Int.zero;
@@ -16,12 +13,6 @@ public class GamePlayManager : MonoBehaviour
     [Space,Header("Output")]
     [SerializeField] private bool placeable = false;
     [SerializeField] private Vector2Int[]? cellPositionOutput;
-
-    private void Start()
-    {
-        
-    }
-
 
 #if false
     
