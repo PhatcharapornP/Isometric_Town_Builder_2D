@@ -12,6 +12,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void Start()
     {
+        
         uiManager.goToGameplaySceneButton.AddToOnClickAsync(GoToGameplayScene);
     }
 
@@ -22,6 +23,7 @@ public class MainMenuManager : MonoBehaviour
 
     private async UniTask GoToGameplayScene(CancellationToken ct)
     {
+        LoadingCanvas.Instance?.FullScreenLoading.ShowLoading();
         await LoadSceneUtil.GoToSceneAsync(
             targetSceneName: gameplaySceneName,
             unloadSceneName: mainMenuSceneName

@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class SaveLoadManager
 {
+    
+    
     //TODO: Need to load and supply save data to the games
 
     
@@ -10,8 +12,10 @@ public class SaveLoadManager
     public void LoadGameSave()
     {
         //grid states (id,position,type, OccupyData, undefined etc.) -> OccupyData (uid,PlaceableObjectType,rotation) 
-        
-        
+    }
+
+    public void SaveGame()
+    {
         
     }
 }

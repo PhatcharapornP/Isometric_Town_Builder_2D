@@ -1,5 +1,4 @@
 #nullable enable
-using System;
 using UnityEngine;
 
 /// <summary>
@@ -8,26 +7,17 @@ using UnityEngine;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
-    [Space,Header("Managers")] 
-    [SerializeField] private GameStateManager? gameStateManager;
-    [SerializeField] private BoardManager boardManager = new BoardManager();
+    [Header("SaveLoadManager container here.")]
+    public static GameManager Instance;
     private SaveLoadManager saveLoadManager = new SaveLoadManager();
-    
-    [Space,Header("GameConfigs")] 
-    [SerializeField] private GameConfigContainer gameConfigContainer;
-    
-    public static GameManager instance;
-    public GameStateManager GameStateManager => gameStateManager;
-    public BoardManager BoardManager => boardManager;
     public SaveLoadManager SaveLoadManager => saveLoadManager;
 
     private void Awake()
     {
+        Instance = this;
+        Debug.Log("GameManager Awake".LogColor(new Color(0.35f, 1f, 0.6f)),gameObject);
         DontDestroyOnLoad(gameObject);
     }
 
-    private void Start()
-    {
-        gameStateManager?.Initialize();
-    }
+   
 }

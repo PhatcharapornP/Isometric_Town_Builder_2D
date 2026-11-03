@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ public class LoadingCanvas : MonoBehaviour
     
     private void Awake()
     {
+        Instance = this;
         DontDestroyOnLoad(gameObject);
     }
 }
