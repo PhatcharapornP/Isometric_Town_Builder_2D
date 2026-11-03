@@ -1,6 +1,15 @@
 using System;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.Tilemaps;
+
+[Serializable]
+public struct BuildableTileData
+{
+    public Vector3Int TilePosition;
+    public TileBase TilebaseObject;
+    public CellType CellType;
+}
 
 [Serializable]
 public class CellData

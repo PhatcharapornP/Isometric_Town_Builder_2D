@@ -18,3 +18,8 @@ public class QuizGameState : BaseGameState
         Debug.Log($"{GetType().Name}.OnExit()");
     }
 }
+
+public class QuizHandler
+{
+    
+}

@@ -53,6 +53,11 @@ public class GenericButton : MonoBehaviour
         ClearCallback();
     }
 
+    public void SetButtonText(string text)
+    {
+        buttonText?.SetText(text);
+    }
+
     private void OnButtonClicked()
     {
         if (!TryPassRapidClickGate())

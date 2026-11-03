@@ -10,12 +10,17 @@ using UnityEngine.UI;
 
 public class UtilPopup : MonoBehaviour
 {
-    public static UtilPopup Instance;
+    public static UtilPopup? Instance;
     [SerializeField] private TextMeshProUGUI headerText;
     [SerializeField] private TextMeshProUGUI contentText;
     [SerializeField] private Button clickAnywhereButton;
     [SerializeField] private GenericButton confirmButton;
     [SerializeField] private GenericButton cancelButton;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     public void ShowPopup(NotifyPopupClickToClose popupDetails)
     {
