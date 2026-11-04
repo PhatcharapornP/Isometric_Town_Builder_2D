@@ -15,6 +15,8 @@ public class BuildingObject : MonoBehaviour
    public void SetFlipSpriteRenderer(bool value)
    {
       FlipSpriteRenderer = value;
+      spriteRenderer.flipX = FlipSpriteRenderer;
+      
    }
 
    public void SetPosition(Vector3 screenToWorldPos)

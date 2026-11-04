@@ -20,7 +20,7 @@ public class GenericButton : MonoBehaviour
 
     private float _lastClickTime = -Mathf.Infinity;
 
-    public Action? ClickedAction = null;
+    private Action? clickedAction = null;
 
     //for async subscription
     private IDisposable? buttonEvent;
@@ -65,8 +65,23 @@ public class GenericButton : MonoBehaviour
             return;
         }
 
-        ClickedAction?.Invoke();
+        Debug.Log($"{GetType().Name}.OnButtonClicked() {gameObject.name} ClickedAction null?: {clickedAction == null}".LogColor(Color.forestGreen), gameObject);
+        clickedAction?.Invoke();
         PlaySfx();
+    }
+
+    public void AddToClickAction(Action action)
+    {
+        clickedAction += action;
+        Debug.Log($"{GetType().Name}.AddToClickAction() {gameObject.name} ClickedAction null?: {clickedAction == null}".LogColor(Color.bisque), gameObject);
+    }
+
+    public void RemoveFromClickAction(Action action)
+    {
+        
+        clickedAction -= action;
+        
+        Debug.Log($"{GetType().Name}.RemoveFromClickAction() {gameObject.name} ClickedAction null?: {clickedAction == null}".LogColor(Color.softRed), gameObject);
     }
     
     public void AddToOnClickAsync(Func<CancellationToken, UniTask> onClickAsync)
@@ -93,8 +108,10 @@ public class GenericButton : MonoBehaviour
 
     public void ClearCallback([CallerMemberName] string caller = "")
     {
-        ClickedAction = null;
+        clickedAction = null;
         onClickAsync = null;
+        
+        Debug.Log($"{GetType().Name}.ClearCallback() {gameObject.name} from: {caller}".LogColor(Color.red),gameObject);
     }
 
     private bool TryPassRapidClickGate()

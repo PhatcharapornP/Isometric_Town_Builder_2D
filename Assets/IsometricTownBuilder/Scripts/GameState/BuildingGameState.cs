@@ -1,8 +1,7 @@
-using UnityEngine;
-
 public class BuildingGameState : BaseGameState
 {
     public override GameStateType StateType => GameStateType.Building;
+    public BuildState CurrentBuildState { get; private set; } =  BuildState.Undefined;
     public override void Initialize()
     {
         //nothing yet
@@ -10,11 +9,37 @@ public class BuildingGameState : BaseGameState
 
     public override void Enter()
     {
-        Debug.Log($"{GetType().Name}.OnEnter()");
+    }
+
+    public void ChangeBuildState(BuildState buildState
+// #if UNITY_EDITOR
+//         ,[CallerMemberName] string caller = ""
+// #endif
+    )
+    {
+        if (CurrentBuildState == buildState)
+        {
+            return;
+        }
+
+        CurrentBuildState = buildState;
+// #if UNITY_EDITOR
+//         Debug.Log($"{GetType().Name}.ChangeBuildState({buildState}) from: {caller}".LogColor(Color.yellowGreen));
+// #endif
+        
     }
 
     public override void Exit()
     {
-        Debug.Log($"{GetType().Name}.OnExit()");
     }
+}
+
+
+public enum BuildState
+{
+    Undefined,
+    Selecting,
+    Building,
+    HoldingSelectedBuilding,
+    
 }

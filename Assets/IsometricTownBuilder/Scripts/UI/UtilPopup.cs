@@ -33,7 +33,7 @@ public class UtilPopup : MonoBehaviour
     {
         if (popupDetails.OnClickAction != null)
         {
-            confirmButton.ClickedAction = popupDetails.OnClickAction;
+            confirmButton.AddToClickAction( popupDetails.OnClickAction);
         }
 
         if (popupDetails.OnClickAsync != null)
@@ -55,12 +55,12 @@ public class UtilPopup : MonoBehaviour
     {
         if (popupDetails.OnClickActionOne != null)
         {
-            confirmButton.ClickedAction = popupDetails.OnClickActionOne;
+            confirmButton.AddToClickAction( popupDetails.OnClickActionOne);
         }
 
         if (popupDetails.OnClickActionTwo != null)
         {
-            cancelButton.ClickedAction = popupDetails.OnClickActionTwo;
+            cancelButton.AddToClickAction( popupDetails.OnClickActionTwo);
         }
 
         if (popupDetails.OnClickAsyncOne != null)

@@ -12,11 +12,11 @@ public class IdleGameState : BaseGameState
 
     public override void Enter()
     {
-        Debug.Log($"{GetType().Name}.OnEnter()");
+        // Debug.Log($"{GetType().Name}.OnEnter()");
     }
 
     public override void Exit()
     {
-        Debug.Log($"{GetType().Name}.OnExit()");
+        // Debug.Log($"{GetType().Name}.OnExit()");
     }
 }

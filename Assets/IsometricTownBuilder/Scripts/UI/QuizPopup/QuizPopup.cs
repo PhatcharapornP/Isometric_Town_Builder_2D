@@ -33,10 +33,10 @@ public class QuizPopup : MonoBehaviour
       answerTwo.SetButtonText(popupDetail.answerTwoText);
       answerThree.SetButtonText(popupDetail.answerThreeText);
       answerFour.SetButtonText(popupDetail.answerFourText);
-      answerOne.ClickedAction += popupDetail.OnClickAnswerOne;
-      answerTwo.ClickedAction += popupDetail.OnClickAnswerTwo;
-      answerThree.ClickedAction += popupDetail.OnClickAnswerThree;
-      answerFour.ClickedAction += popupDetail.OnClickAnswerFour;
+      answerOne.AddToClickAction(popupDetail.OnClickAnswerOne);
+      answerTwo.AddToClickAction(popupDetail.OnClickAnswerTwo);
+      answerThree.AddToClickAction(popupDetail.OnClickAnswerThree);
+      answerFour.AddToClickAction(popupDetail.OnClickAnswerFour);
       
       EnableQuizPopup(true);
    }

@@ -14,7 +14,7 @@ public class GameStateManager : MonoBehaviour
     private IGameState? currentState;
     public IGameState? CurrentState => currentState;
 
-    public Dictionary<GameStateType, IGameState> gameStateDict = new();
+    private Dictionary<GameStateType, IGameState> gameStateDict = new();
     public bool IsInitialized { get; private set; } = false;
 
     public void Initialize()
@@ -22,7 +22,6 @@ public class GameStateManager : MonoBehaviour
         InitializeGameStates();
         SetupGameStateDict();
         IsInitialized = true;
-        Debug.Log($"{GetType().Name}.Initialize() called",gameObject);
     }
 
     private void InitializeGameStates()
@@ -51,6 +50,11 @@ public class GameStateManager : MonoBehaviour
     {
         if (currentState != null)
         {
+            if (currentState.StateType == goToState)
+            {
+                return;
+            }
+            
             currentState.Exit();
         }
 

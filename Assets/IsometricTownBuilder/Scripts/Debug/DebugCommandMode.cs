@@ -1,8 +1,8 @@
 #nullable enable
-using System;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class DebugCommandMode : MonoBehaviour
 {
@@ -27,14 +27,16 @@ public class DebugCommandMode : MonoBehaviour
 
     private void Start()
     {
+        //This doesn't needed if navigated from 'Main' scene
         if (GameManager.Instance == null)
         {
             //TODO: Load GameManager
-           var prefab = Resources.Load<GameObject>(GAME_MANAGER_PATH);
-           var gameManager = Instantiate(prefab);
+           var gameManagerPrefab = Resources.Load<GameObject>(GAME_MANAGER_PATH);
+           Instantiate(gameManagerPrefab);
+           
         }
 
-        openDebugButton.ClickedAction += OnClickDebugButton;
+        openDebugButton.AddToClickAction(OnClickDebugButton);
 
         InitializeDebugAsync().Forget();
 
@@ -54,6 +56,10 @@ public class DebugCommandMode : MonoBehaviour
     {
         string gameStateDebug = "";
         string debugInitialized = $" isInitialized: {isInitialized}";
+        string screenPos = $" ScreenPos: {GamePlayManager.Instance.PlayerInput.ScreenPos}";
+        string clickPos = $" ClickPos: {GamePlayManager.Instance.PlayerInput.ClickPos}";
+        string touchNull = $" touch null?: {Touchscreen.current == null}";
+        string mouseNull = $" mouse null?: {Mouse.current == null}";
         if (gameStateManager != null)
         {
             gameStateDebug = $" currentGameState: {gameStateManager.CurrentState}";
@@ -64,7 +70,11 @@ public class DebugCommandMode : MonoBehaviour
         }
 
         debugText.SetText(debugInitialized + $" " +
-                          $" \n  {gameStateDebug}");
+                          $" \n  {gameStateDebug}" +
+                          $" \n {screenPos}" +
+                          $" \n {clickPos}" +
+                          $" \n {touchNull}" +
+                          $" \n {mouseNull}");
     }
 
     private void OnClickDebugButton()
@@ -92,7 +102,7 @@ public class DebugCommandMode : MonoBehaviour
 
     private void SetupIdleDebug()
     {
-        idleState.ClickedAction += GoToIdleState;
+        idleState.AddToClickAction(GoToIdleState);
     }
 
     private void GoToIdleState()
@@ -102,7 +112,7 @@ public class DebugCommandMode : MonoBehaviour
 
     private void SetupBuildingDebug()
     {
-        buildingState.ClickedAction += GoToBuildingState;
+        buildingState.AddToClickAction(GoToBuildingState);
     }
 
     private void GoToBuildingState()
@@ -113,7 +123,7 @@ public class DebugCommandMode : MonoBehaviour
 
     private void SetupQuizDebug()
     {
-        quizState.ClickedAction += GoToQuizState;
+        quizState.AddToClickAction(GoToQuizState);
     }
 
     private void GoToQuizState()
@@ -124,7 +134,7 @@ public class DebugCommandMode : MonoBehaviour
 
     private void SetupMixingDebug()
     {
-        mixingState.ClickedAction += GoToMixingState;
+        mixingState.AddToClickAction(GoToMixingState);
     }
 
     private void GoToMixingState()
@@ -134,7 +144,7 @@ public class DebugCommandMode : MonoBehaviour
 
     private void SetupSavingDebug()
     {
-        savingState.ClickedAction += SaveGame;
+        savingState.AddToClickAction(SaveGame);
     }
 
     private void SaveGame()
@@ -144,7 +154,7 @@ public class DebugCommandMode : MonoBehaviour
 
     private void SetupLoadingState()
     {
-        loadingState.ClickedAction += ReloadGame;
+        loadingState.AddToClickAction(ReloadGame);
     }
 
     private void ReloadGame()
@@ -154,7 +164,7 @@ public class DebugCommandMode : MonoBehaviour
 
     private void SetupLoadingSaveState()
     {
-        loadingSaveState.ClickedAction += LoadGameSave;
+        loadingSaveState.AddToClickAction(LoadGameSave);
     }
 
     private void LoadGameSave()
