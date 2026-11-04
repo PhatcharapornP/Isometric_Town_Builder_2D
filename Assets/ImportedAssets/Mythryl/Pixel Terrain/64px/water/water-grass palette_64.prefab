@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2669053063911978}
   - component: {fileID: 4408236960045316}
   m_Layer: 0
-  m_Name: Water Grass
+  m_Name: water-grass palette_64
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

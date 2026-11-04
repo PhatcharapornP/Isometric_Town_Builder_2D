@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2263931082480496}
   - component: {fileID: 1559708103183990}
   m_Layer: 0
-  m_Name: Ground grass
+  m_Name: ground-grass palette_64
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -1,25 +1,24 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class TilemapUtils : MonoBehaviour
 {
     [SerializeField] private Tilemap tilemap;
-    [SerializeField] private BoundsInt bounds;
     [SerializeField] private TileBase[] tiles;
     [SerializeField] private BuildableTileData[] furnitureTiles;
     [SerializeField] private BuildableTileData[] mixBuildingTiles;
-
-    [Space] [SerializeField] private Vector2Int size = new Vector2Int(30, 30);
-    [SerializeField] private Vector2Int origin = new Vector2Int(0, 0);
-    [Space] [SerializeField] private Vector3Int tilePos;
-    [Space] [SerializeField] private TileBase selectedTile;
-    [SerializeField] private string tileString;
+    
+    [Space]
+    [SerializeField] private Vector3Int tilePos;
+    [Space]
+    [SerializeField] private TileBase selectedTile;
     [SerializeField] private bool hasSelected = false;
-    [Space] [SerializeField] private Vector3 screenToWorldPos;
+    [Space] 
+    [SerializeField] private Vector3 screenToWorldPos;
     [SerializeField] private Vector3 screenPos;
     [SerializeField] private Vector2 clickPos;
 
@@ -30,6 +29,14 @@ public class TilemapUtils : MonoBehaviour
 
     private Dictionary<Vector3Int, BuildableTileData> buildableTiles = new Dictionary<Vector3Int, BuildableTileData>();
 
+    [Space] 
+    [SerializeField] private BuildingObject debugFurniture1Tile;
+    [SerializeField] private BuildingObject debugFurniture2Tiles;
+    [SerializeField] private bool testing1Tile = true;
+
+    private GamePlayManager gamePlayManager => GamePlayManager.Instance;
+    private GameStateManager gameStateManager => gamePlayManager.GameStateManager;
+
     private void Start()
     {
         camera = Camera.main;
@@ -39,8 +46,33 @@ public class TilemapUtils : MonoBehaviour
 
     private void Update()
     {
-        DetectTouch();
-        DetectMouseClick();
+        //TODO: Detect game state is in build state
+        if (gamePlayManager == null && gameStateManager == null)
+        {
+            return;
+        }
+
+        if (gameStateManager.CurrentState is not BuildingGameState)
+        {
+            return;
+        }
+        
+        DetectTouch(false);
+        DetectMouseClick(false);
+
+        
+        //TODO: Move target building with the moving screen pos
+        {
+            screenToWorldPos = camera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0f));
+            if (testing1Tile)
+            {
+                debugFurniture1Tile.SetPosition(screenToWorldPos);
+            }
+            else
+            {
+                debugFurniture2Tiles.SetPosition(screenToWorldPos);
+            }
+        }
     }
 
     private void SetupBuildableTileDict()
@@ -54,7 +86,7 @@ public class TilemapUtils : MonoBehaviour
     }
 
 
-    private void DetectTouch()
+    private void DetectTouch(bool detectTouch)
     {
         var touchscreen = Touchscreen.current;
         if (touchscreen == null)
@@ -63,6 +95,10 @@ public class TilemapUtils : MonoBehaviour
         }
 
         var hasTouched = touchscreen.touches.Count > 0 && touchscreen.touches[0].press.wasPressedThisFrame;
+        if (!detectTouch)
+        {
+            hasTouched = true;
+        }
         // bool androidTouched = Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began;
         if (hasTouched /*androidTouched*/)
         {
@@ -70,20 +106,27 @@ public class TilemapUtils : MonoBehaviour
             //camera z is -10
             // screenPos = new Vector3(touch.position.x, touch.position.y, 10f);
 
-            var screenPosition = touchscreen.touches[0].position.ReadValue();
-            screenPos = new Vector3(screenPosition.x, screenPosition.y, 10f);
+            clickPos = touchscreen.touches[0].position.ReadValue();
+            screenPos = new Vector3(clickPos.x, clickPos.y, 10f);
             HandleOnClick();
         }
     }
 
-    private void DetectMouseClick()
+    private void DetectMouseClick(bool detectClick)
     {
         if (Mouse.current == null)
         {
             return;
         }
 
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        bool hasClicked = Mouse.current.leftButton.wasPressedThisFrame;
+
+        if (!detectClick)
+        {
+            hasClicked = true;
+        }
+        
+        if (hasClicked)
         {
             clickPos = Mouse.current.position.ReadValue();
             //camera z is -10
@@ -106,20 +149,13 @@ public class TilemapUtils : MonoBehaviour
         //update tilePos
         tilePos = newTilePos;
 
-        //by default this set flags as lock color, set as none and added selected color?
-
-
         //update selectedTile
         selectedTile = tilemap.GetTile(tilePos);
         if (selectedTile != null)
         {
             var data = new TileData();
             selectedTile.GetTileData(tilePos, null, ref data);
-            Debug.Log($"sprite: {data.sprite.name}" +
-                      $"\n color: {data.color}" +
-                      $"\n flags: {data.flags}", data.gameObject);
 
-            // if (data.sprite.name.Contains("dirt"))
             if (buildableTiles.ContainsKey(tilePos))
             {
                 tilemap.SetTileFlags(tilePos, TileFlags.None);
@@ -136,33 +172,12 @@ public class TilemapUtils : MonoBehaviour
         }
     }
 
-#if false
-
+#if true
     private void OnValidate()
     {
         GetTileCounts();
     }
 
-#endif
-
-    private bool InBounds(Vector3Int cell)
-    {
-        return cell.x >= origin.x
-               && cell.x < origin.x + size.x
-               && cell.y >= origin.y
-               && cell.y < origin.y + size.y;
-    }
-
-    private bool TrySetTile(Vector3Int cell, TileBase tileBase)
-    {
-        if (!InBounds(cell))
-        {
-            return false;
-        }
-
-        tilemap.SetTile(cell, tileBase);
-        return true;
-    }
 
     private void GetTileCounts()
     {
@@ -170,8 +185,7 @@ public class TilemapUtils : MonoBehaviour
         {
             return;
         }
-
-        bounds = tilemap.cellBounds;
+        
         var tileBaseFilterList = new List<TileBase>();
         var mixingBuildingTileList = new List<BuildableTileData>();
         var furnitureTileList = new List<BuildableTileData>();
@@ -184,7 +198,7 @@ public class TilemapUtils : MonoBehaviour
             {
                 continue;
             }
-
+            tileBaseFilterList.Add(tileBase);
             var tileData = new TileData();
             tileBase.GetTileData(tilePos, null, ref tileData);
 
@@ -222,4 +236,5 @@ public class TilemapUtils : MonoBehaviour
         mixBuildingTiles = mixingBuildingTileList.ToArray();
         tiles = tileBaseFilterList.ToArray();
     }
+#endif
 }
