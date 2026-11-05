@@ -5,10 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/IsometricTownBuilder/Scenes/Main.unity
     guid: d92ea33097324004b80e071d01af3cfb
-  - enabled: 1
+  - enabled: 0
     path: Assets/IsometricTownBuilder/Scenes/BoardGameplay.unity
     guid: 1fc078b343387d44b87819f502de66fe
   m_configObjects:
