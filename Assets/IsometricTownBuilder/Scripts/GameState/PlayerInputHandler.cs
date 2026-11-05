@@ -3,7 +3,17 @@ using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
+
+public enum InputState
+{
+    Undefined,
+    OnStartPressed,
+    OnStartHolding,
+    WhileHolding,
+    OnEndHolding,
+    OnReleased,
+    OnResetHolding
+}
 
 public class PlayerInputHandler : MonoBehaviour
 {
@@ -25,7 +35,18 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action? OnResetHolding;
 
     public event Action<Vector3>? InputPositionUpdated;
+    
+    public InputState  InputState { get; private set; } = InputState.Undefined;
 
+    private void Awake()
+    {
+        OnStartPressed += UpdateStateOnStartPressed;
+        OnStartHolding += UpdateStateOnStartHolding;
+        WhileHolding += UpdateStateWhileHolding;
+        OnEndHolding += UpdateStateOnEndHolding;
+        OnReleased += UpdateStateOnReleased;
+        OnResetHolding += UpdateStateOnResetHolding;
+    }
 
     private void Update()
     {
@@ -148,4 +169,38 @@ public class PlayerInputHandler : MonoBehaviour
             ResetHoldingState();
         }
     }
+
+    #region InputState
+
+    private void UpdateStateOnResetHolding()
+    {
+        InputState = InputState.OnResetHolding;
+    }
+
+    private void UpdateStateOnReleased(Vector3 obj)
+    {
+        InputState = InputState.OnReleased;
+    }
+
+    private void UpdateStateOnEndHolding(Vector3 obj)
+    {
+        InputState = InputState.OnEndHolding;
+    }
+
+    private void UpdateStateWhileHolding(float timer)
+    {
+        InputState = InputState.WhileHolding;
+    }
+
+    private void UpdateStateOnStartHolding()
+    {
+        InputState = InputState.OnStartHolding;
+    }
+
+    private void UpdateStateOnStartPressed()
+    {
+        InputState = InputState.OnStartPressed;
+    }
+
+    #endregion
 }

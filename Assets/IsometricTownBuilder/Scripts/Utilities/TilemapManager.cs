@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class TilemapManager : MonoBehaviour
@@ -14,10 +15,10 @@ public class TilemapManager : MonoBehaviour
 
     [Space] 
     [SerializeField] private Vector3Int tilePos;
-    [SerializeField] private List<Vector3Int> neighbourTilePosList = new List<Vector3Int>();
+    [SerializeField] private List<Vector3Int> allTilePosList = new List<Vector3Int>();
     [Space] 
     [SerializeField] private TileBase selectedTile;
-    [SerializeField] private List<TileBase> selectedNeighbourTiles = new List<TileBase>();
+    [SerializeField] private List<TileBase> selectedTiles = new List<TileBase>();
     [SerializeField] private bool hasSelected = false;
     [Space] 
     [SerializeField] private Vector3 screenToWorldPos;
@@ -25,15 +26,19 @@ public class TilemapManager : MonoBehaviour
     [SerializeField] private Vector2 clickPos;
 
     private Color defaultColor = Color.white;
-    private Color buildableColor = Color.green;
+    private Color buildableColor = Color.greenYellow;
     private Color noneBuildableColor = Color.red;
-    private Color neighbour = Color.orangeRed;
+    // private Color neighbourPlusOneX = Color.orangeRed;
+    // private Color neighbourMinusOneX = new(0.2f, 0.95f, 1f);
+    // private Color neighbourPlusOneY = new(0.91f, 0.31f, 1f);
+    // private Color neighbourMinusOneY = new(0.71f, 1f, 0.2f);
 
     private Camera camera;
 
     private Dictionary<Vector3Int, BuildableTileData> buildableTiles = new Dictionary<Vector3Int, BuildableTileData>();
 
     private GamePlayManager gamePlayManager => GamePlayManager.Instance;
+    private BuildingObjectSelecter buildObjSelecter => gamePlayManager.BuildingObjSelecter;
     private GameStateManager gameStateManager => gamePlayManager.GameStateManager;
 
     private PlayerInputHandler playerInput => GamePlayManager.Instance.PlayerInput;
@@ -50,6 +55,7 @@ public class TilemapManager : MonoBehaviour
     {
         await UniTask.WaitUntil(() => playerInput != null
                                       && gamePlayManager != null
+                                      && gamePlayManager.BuildingObjSelecter != null
                                       && gamePlayManager.BuildingObjSelecter != null);
         camera = Camera.main;
         SetupBuildableTileDict();
@@ -71,9 +77,18 @@ public class TilemapManager : MonoBehaviour
             return;
         }
         
+        ResetAllCachedTileColorToDefault();
+    }
+
+    private void ResetAllCachedTileColorToDefault()
+    {
         tilemap.SetColor(tilePos, defaultColor);
-        neighbourTilePosList.Clear();
-        selectedNeighbourTiles.Clear();
+        foreach (var neighbourPos in allTilePosList)
+        {
+            tilemap.SetColor(neighbourPos, defaultColor);
+        }
+        allTilePosList.Clear();
+        selectedTiles.Clear();
     }
 
     private void SetupBuildableTileDict()
@@ -113,95 +128,44 @@ public class TilemapManager : MonoBehaviour
             return;
         }
         
+        ResetTilePosAndNeighbourToDefaultColor();
+        
         screenToWorldPos = camera.ScreenToWorldPoint(screenPos);
         var newTilePos = tilemap.WorldToCell(screenToWorldPos);
-
-        ResetTilePosAndNeighbourToDefaultColor();
-
-        //update tilePos
-        tilePos = newTilePos;
         
-        neighbourTilePosList.Clear();
-        selectedNeighbourTiles.Clear();
-        //TODO: find neighbour on x and -x
+        var selectedBuilding = buildObjSelecter.SelectedObject;
+        if (selectedBuilding == null)
         {
-            var xPos = new  Vector3Int(tilePos.x+1, tilePos.y, tilePos.z);
-            var minXPos = new  Vector3Int(tilePos.x-1, tilePos.y, tilePos.z);
-            var neighbourXPos = tilemap.GetTile(xPos);
-            var neighbourMinXPos = tilemap.GetTile(minXPos);
-            if (neighbourXPos != null&& buildableTiles.ContainsKey(xPos))
-            {
-                neighbourTilePosList.Add(xPos);
-                selectedNeighbourTiles.Add(neighbourXPos);
-            }
-        
-            if (neighbourMinXPos != null&& buildableTiles.ContainsKey(minXPos))
-            {
-                neighbourTilePosList.Add(minXPos);
-                selectedNeighbourTiles.Add(neighbourMinXPos);
-            }    
-        }
-        
-        //TODO: find neighbour on y and -y
-        {
-            var yPos = new  Vector3Int(tilePos.x, tilePos.y+1, tilePos.z);
-            var minYPos = new  Vector3Int(tilePos.x, tilePos.y-1, tilePos.z);
-            var neighbourYPos = tilemap.GetTile(yPos);
-            var neighbourMinYPos = tilemap.GetTile(minYPos);
-            if (neighbourYPos != null && buildableTiles.ContainsKey(yPos))
-            {
-                neighbourTilePosList.Add(yPos);
-                selectedNeighbourTiles.Add(neighbourYPos);
-            }
-        
-            if (neighbourMinYPos != null && buildableTiles.ContainsKey(minYPos))
-            {
-                neighbourTilePosList.Add(minYPos);
-                selectedNeighbourTiles.Add(neighbourMinYPos);
-            }    
+            return;
         }
 
-        //update selectedTile
-        selectedTile = tilemap.GetTile(tilePos);
-        if (selectedTile != null)
+        bool isBuildSpecPass = IsBuildableSpec(newTilePos, selectedBuilding.GetBuildSpecs(), out var tilePosResult);
+        allTilePosList = tilePosResult.ToList();
+        foreach (var neighbourPos in tilePosResult)
         {
-            var data = new TileData();
-            selectedTile.GetTileData(tilePos, null, ref data);
-
-            if (buildableTiles.ContainsKey(tilePos))
+            tilemap.SetTileFlags(neighbourPos, TileFlags.None);
+            tilemap.SetColor(neighbourPos, isBuildSpecPass? buildableColor:noneBuildableColor);
+        }
+        
+    }
+    
+    public bool IsBuildableSpec(Vector3Int origin,IEnumerable<BuildSpec> buildSpecs,out IEnumerable<Vector3Int> tilePosResult)
+    {
+        bool areBuildable = true;
+        var tilePosResultList = new List<Vector3Int>();
+        foreach (var buildSpec in buildSpecs)
+        {
+            var checkTilePos = new Vector3Int(origin.x + buildSpec.X, origin.y + buildSpec.Y, origin.z);
+            tilePosResultList.Add(checkTilePos);
+            if (!buildableTiles.ContainsKey(checkTilePos) && areBuildable)
             {
-                tilemap.SetTileFlags(tilePos, TileFlags.None);
-
-                //TODO: check if this tile has already something build onto it.
-                bool isBuildable = true;
-
-                if (isBuildable)
-                {
-                    tilemap.SetColor(tilePos, buildableColor);
-                    foreach (var neighbourPos in neighbourTilePosList) //todo: need to make the spec of each building and search for the next tile using the spec
-                    {
-                        tilemap.SetColor(neighbourPos, neighbour); 
-                    }
-                }
-                else
-                {
-                    tilemap.SetColor(tilePos, noneBuildableColor);
-                    foreach (var neighbourPos in neighbourTilePosList)
-                    {
-                        tilemap.SetColor(neighbourPos, noneBuildableColor);
-                    }
-                }
-                
-                // Debug.Log(
-                //     $"{GetType().Name}.HandleOnClick() found buildableTile at {tilePos} | cell type: {buildableTiles[tilePos].CellType}"
-                //         .LogColor(Color.greenYellow));
-            }
-            else
-            {
-                // Debug.Log(
-                //     $"{GetType().Name}.HandleOnClick() none buildable tiles at {tilePos}".LogColor(Color.chocolate));
+                Debug.LogError($"{GetType().Name}.IsBuildableSpec at pos: {checkTilePos} isn't one of the buildables".LogColor(Color.red));
+                areBuildable = false;
             }
         }
+
+        tilePosResult = tilePosResultList;
+        return areBuildable;
     }
 
     public void ResetTilePosAndNeighbourToDefaultColor()
@@ -210,11 +174,11 @@ public class TilemapManager : MonoBehaviour
         {
             //re-lock color for selected tile 
             tilemap.SetColor(tilePos, defaultColor);
-
-            foreach (var neighbourPos in neighbourTilePosList)
-            {
-                tilemap.SetColor(neighbourPos, defaultColor);
-            }
+        }
+        
+        foreach (var neighbourPos in allTilePosList)
+        {
+            tilemap.SetColor(neighbourPos, defaultColor);
         }
     }
 

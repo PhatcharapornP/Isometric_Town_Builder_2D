@@ -59,11 +59,11 @@ public class GameplayUIManager : MonoBehaviour
         {
             return;
         }
-        if (buildingGameState.CurrentBuildState is BuildState.Building)
-        {
-            //TODO: show build options
-            OpenBuildOptionsOnPressed();
-        }
+        // if (buildingGameState.CurrentBuildState is BuildState.Building)
+        // {
+        //     //TODO: show build options
+        //     OpenBuildOptionsOnPressed();
+        // }
     }
 
     private void UpdateUIWhilePlayerHoldingInput(float timer)
@@ -79,6 +79,7 @@ public class GameplayUIManager : MonoBehaviour
     private void OnInputResetHolding()
     {
         gameplayCanvas.EnableHoldingImage(false);
+        Debug.Log($"------> {GetType().Name}.OnInputResetHolding() -> buildstate: {buildingGameState.CurrentBuildState}".LogColor(new Color(1f, 0.46f, 0.81f)));
     }
     
     private void OnInputEndHolding(Vector3 screenPos)
@@ -90,7 +91,7 @@ public class GameplayUIManager : MonoBehaviour
     {
     }
 
-    private void OpenBuildOptionsOnPressed()
+    public void OpenBuildOption()
     {
         if (gameplayManager == null)
         {

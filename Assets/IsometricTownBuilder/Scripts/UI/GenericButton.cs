@@ -45,7 +45,7 @@ public class GenericButton : MonoBehaviour
     void OnDisable()
     {
         buttonEvent?.Dispose();
-        button.onClick.RemoveListener(OnButtonClicked);
+        button.onClick.RemoveAllListeners();
     }
 
     private void OnDestroy()

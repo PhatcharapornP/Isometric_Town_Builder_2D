@@ -21,7 +21,6 @@ public class BuildingOptionPanel : MonoBehaviour
     public void Initialize(Canvas canvas)
     {
         this.canvas = canvas;
-        
         IsInitialized = true;
     }
 
@@ -33,9 +32,10 @@ public class BuildingOptionPanel : MonoBehaviour
         acceptButton.AddToClickAction(OnAcceptBuild);
         cancelButton.AddToClickAction(OnCancelBuild);
         flipButton.AddToClickAction(OnFlipBuild);
+     
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         acceptButton.RemoveFromClickAction(OnAcceptBuild);
         cancelButton.RemoveFromClickAction(OnCancelBuild);

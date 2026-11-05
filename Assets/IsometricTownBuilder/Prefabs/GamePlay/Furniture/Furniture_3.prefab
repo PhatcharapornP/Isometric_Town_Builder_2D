@@ -51,7 +51,16 @@ MonoBehaviour:
   positionOffset: {x: 0, y: 0.5, z: 0}
   <FlipSpriteRenderer>k__BackingField: 0
   spriteRenderer: {fileID: 4334285011978877912}
-  buildingQuads: []
+  normalSpec:
+  - X: 0
+    Y: 0
+  - X: 0
+    Y: -1
+  flipSpec:
+  - X: 0
+    Y: 0
+  - X: -1
+    Y: 0
 --- !u!61 &8766949463398537584
 BoxCollider2D:
   m_ObjectHideFlags: 0

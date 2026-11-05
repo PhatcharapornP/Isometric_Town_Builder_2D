@@ -55,7 +55,9 @@ public class DebugCommandMode : MonoBehaviour
     private void UpdateDebugString()
     {
         string gameStateDebug = "";
+        string buildStateDebug = "";
         string debugInitialized = $" isInitialized: {isInitialized}";
+        string inputDebug = $" InputState: {GamePlayManager.Instance.PlayerInput.InputState}";
         string screenPos = $" ScreenPos: {GamePlayManager.Instance.PlayerInput.ScreenPos}";
         string clickPos = $" ClickPos: {GamePlayManager.Instance.PlayerInput.ClickPos}";
         string touchNull = $" touch null?: {Touchscreen.current == null}";
@@ -63,18 +65,21 @@ public class DebugCommandMode : MonoBehaviour
         if (gameStateManager != null)
         {
             gameStateDebug = $" currentGameState: {gameStateManager.CurrentState}";
+            var buildingGameState = gameStateManager?.GetGameStateFromType(GameStateType.Building) as BuildingGameState;
+            buildStateDebug = $"buildState: {buildingGameState.CurrentBuildState}";
         }
         else
         {
             gameStateDebug = $" currentGameState: null";
+            buildStateDebug =  $" buildState: ...";
         }
+        
 
-        debugText.SetText(debugInitialized + $" " +
-                          $" \n  {gameStateDebug}" +
-                          $" \n {screenPos}" +
-                          $" \n {clickPos}" +
-                          $" \n {touchNull}" +
-                          $" \n {mouseNull}");
+        debugText.SetText(debugInitialized + $" " + $" {gameStateDebug}" + $"  {buildStateDebug}" +
+                          $" \n {inputDebug}" +
+                          $" \n {screenPos}" + $" {clickPos}" +
+                          $" \n {touchNull}" + $" {mouseNull}"
+                          );
     }
 
     private void OnClickDebugButton()

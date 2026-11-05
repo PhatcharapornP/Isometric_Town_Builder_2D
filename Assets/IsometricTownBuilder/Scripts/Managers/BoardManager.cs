@@ -6,7 +6,6 @@ using UnityEngine;
 [Serializable]
 public class BoardManager 
 {
-    [SerializeField] private GetBuildPositionUtil  getBuildPositionUtil = new GetBuildPositionUtil();
     
     private Dictionary<Vector3Int,CellData> boardCellDict = new Dictionary<Vector3Int,CellData>();
 

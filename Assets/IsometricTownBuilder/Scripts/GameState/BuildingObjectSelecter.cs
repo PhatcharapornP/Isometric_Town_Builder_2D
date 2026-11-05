@@ -35,7 +35,8 @@ public class BuildingObjectSelecter : MonoBehaviour
      * 1. Hold
      * 2. End hold -> pick up
      * 3. click -> place + show build option
-     * 4. end with build option
+     * 4. If the build option hasn't close it self after clicked any button. The build object must be able to be pick up again.
+     * 5. end with build option
      */
 
     private void Start()
@@ -282,8 +283,11 @@ public class BuildingObjectSelecter : MonoBehaviour
         
          Debug.Log($"{GetType().Name}.OnCancelSelecting() ".LogColor(new Color(1f, 0.42f, 0.15f)));
         // selectingObject = null;
-        // UpdateBuildState(BuildState.Undefined);
         // gameStateManager?.GoToState(GameStateType.Idle);
+        UpdateBuildState(BuildState.Building);
+        //TODO: Trigger build option...
+        
+        gameplayUI.OpenBuildOption();
     }
 
     private void OnInputReleased(Vector3 screenPos)
