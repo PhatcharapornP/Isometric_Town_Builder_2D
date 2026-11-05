@@ -7,7 +7,6 @@ public class GamePlayManager : MonoBehaviour
 {
     [Space, Header("Managers")]
     [SerializeField] private GameStateManager? gameStateManager;
-    [SerializeField] private BoardManager boardManager = new BoardManager();
     [SerializeField] private GameplayUIManager? gameplayUIManager;
     [SerializeField] private PlayerInputHandler? playerInput;
     [SerializeField] private BuildingObjectSelecter? buildingObjSelecter;
@@ -18,7 +17,6 @@ public class GamePlayManager : MonoBehaviour
     [SerializeField] private PlaceableObjectConfigData testingPlaceableObj;
 
     public GameStateManager? GameStateManager => gameStateManager;
-    public BoardManager? BoardManager => boardManager;
     public PlayerInputHandler? PlayerInput => playerInput;
 
     public GameplayUIManager? GamePlayUI => gameplayUIManager;
@@ -33,7 +31,6 @@ public class GamePlayManager : MonoBehaviour
     {
         Instance = this;
         gameStateManager?.Initialize();
-        boardManager?.Initialize();
         InitializeAllManagers().Forget();
     }
 

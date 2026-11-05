@@ -67,8 +67,9 @@ public class TilemapManager : MonoBehaviour
     private void OnFlip(bool flipped)
     {
         Debug.Log($"[TileMap] {GetType().Name}.OnFlip -> flipped: {flipped}".LogColor(new Color(1f, 0.7f, 0.61f)));
-        TilePos = buildObjSelecter.SelectedObject.OriginTileWhileHolding;
-        GetNewBuildSpecTilesAndColorThem(buildObjSelecter.SelectedObject.OriginTileWhileHolding,buildObjSelecter.SelectedObject);
+        //TODO: Update runtime data
+        TilePos = buildObjSelecter.SelectedObject.BuildingRuntimeData.OriginTilePosition;
+        GetNewBuildSpecTilesAndColorThem(TilePos,buildObjSelecter.SelectedObject);
     }
 
     private void OnBuildCancel()
@@ -152,7 +153,7 @@ public class TilemapManager : MonoBehaviour
         {
             screenToWorldPos = camera.ScreenToWorldPoint(screenPos);
             TilePos = tilemap.WorldToCell(screenToWorldPos);
-            buildObjSelecter.SelectedObject.SetOriginTileWhileHolding(TilePos);    
+            buildObjSelecter.SelectedObject.BuildingRuntimeData.SetOriginalTilePosition(TilePos);
         }
         
         GetNewBuildSpecTilesAndColorThem(TilePos,buildObjSelecter.SelectedObject);

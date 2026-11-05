@@ -1,21 +1,9 @@
 #nullable enable
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class BoardManager 
+public static class BoardManager 
 {
-    
-    private Dictionary<Vector3Int,CellData> boardCellDict = new Dictionary<Vector3Int,CellData>();
-
-    [field:SerializeField] public bool IsInitialized { get; private set; } = false;
-    [field:SerializeField] public bool HasUpdatedFromSave { get; private set; } = false;
-
-    public void Initialize()
-    {
-        IsInitialized = true;
-    }
-    
-    //TODO: handle build onto cell
+    private static Dictionary<Vector3Int,CellData> boardCellDict = new Dictionary<Vector3Int,CellData>();
+    //TODO: be used by SaveLoadManager to init saved build objects in the board
 }

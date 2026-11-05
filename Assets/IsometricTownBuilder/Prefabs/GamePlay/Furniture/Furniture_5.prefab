@@ -194,7 +194,7 @@ SpriteRenderer:
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 897b9789b094a7e49b8e266169f8a4d1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c4276290aa2070a4f8e0cb51a3054533, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -251,21 +251,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea0b6174540f92f4a99ab30f96864f45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildingObject
-  positionOffset: {x: 0, y: 1.5, z: 0}
-  tilePosOffset: {x: 0, y: 1.5, z: 0}
+  <BulidingId>k__BackingField: 5
+  positionOffset: {x: 0, y: 0.5, z: 0}
+  tilePosOffset: {x: 0, y: 0.5, z: 0}
   spriteRenderer: {fileID: 8775791552516001798}
   normalSpec:
   - X: 0
     Y: 0
+  - X: 0
+    Y: -1
   flipSpec:
   - X: 0
     Y: 0
-  <FlipSpriteRenderer>k__BackingField: 0
+  - X: -1
+    Y: 0
   <HasBeenBuilt>k__BackingField: 0
-  <BuiltOnTiles>k__BackingField: []
-  <BuiltOnPos>k__BackingField: {x: 0, y: 0, z: 0}
-  <OriginTileWhileHolding>k__BackingField: {x: 0, y: 0, z: 0}
-  <OriginBuiltOnTile>k__BackingField: {x: 0, y: 0, z: 0}
+  <BuildingRuntimeData>k__BackingField:
+    <OriginTilePosition>k__BackingField: {x: 0, y: 0, z: 0}
+    <BuiltOnTiles>k__BackingField: []
+    <FlipValue>k__BackingField: 0
+  <BuiltData>k__BackingField:
+    <OriginTilePosition>k__BackingField: {x: 0, y: 0, z: 0}
+    <BuiltOnTiles>k__BackingField: []
+    <FlipValue>k__BackingField: 0
 --- !u!61 &7451856890933114354
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -300,7 +308,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.57, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -310,5 +318,5 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.74, y: 4.01}
+  m_Size: {x: 2.94, y: 3.09}
   m_EdgeRadius: 0

@@ -1,10 +1,13 @@
 #nullable enable
 using UnityEngine;
 
+public static class SaveKeyGlobal
+{
+    public const string BuildObjectSaveKey = "";
+}
+
 public class SaveLoadManager
 {
-    
-    
     //TODO: Need to load and supply save data to the games
 
     

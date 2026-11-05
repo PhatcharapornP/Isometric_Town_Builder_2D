@@ -85,11 +85,11 @@ public class BuildingObjectSelecter : MonoBehaviour
             return;
         }
 
-        selectingObject.SetFlipSpriteRenderer(!selectingObject.FlipSpriteRenderer);
-        Debug.Log($"[BuildObjSelecter]  {GetType().Name}.OnFlip() to: {selectingObject.FlipSpriteRenderer}".LogColor(Color.greenYellow));
+        selectingObject.SetFlipSpriteRenderer(!selectingObject.BuildingRuntimeData.FlipValue);
+        Debug.Log($"[BuildObjSelecter]  {GetType().Name}.OnFlip() to: {selectingObject.BuildingRuntimeData.FlipValue}".LogColor(Color.greenYellow));
         
         //don't like this at all, need to refactor this and open for anyone to sub self according to one place again.
-        OnSelectedObjFlip?.Invoke(selectingObject.FlipSpriteRenderer);
+        OnSelectedObjFlip?.Invoke(selectingObject.BuildingRuntimeData.FlipValue);
         
         //TODO: Check if it still build able, otherwise back to HoldingSelectedBuilding
     }
@@ -114,7 +114,8 @@ public class BuildingObjectSelecter : MonoBehaviour
         else //TODO: Reset build object to previous pos
         {
             selectingObject.SetBuilt(true);
-            var tileWorldPos = tilemapManager.GetTileWorldPosition(selectingObject.OriginBuiltOnTile);
+            selectingObject.SetFlipSpriteRenderer(selectingObject.BuiltData.FlipValue);
+            var tileWorldPos = tilemapManager.GetTileWorldPosition(selectingObject.BuiltData.OriginTilePosition);
             selectingObject.SnapToTilePosition(tileWorldPos);
         }
         
@@ -147,11 +148,18 @@ public class BuildingObjectSelecter : MonoBehaviour
         OnAcceptBuildAction?.Invoke();
         gameplayUI.BuildingOptionPanel.EnableOptionPanel(false);
         selectingObject.SetBuilt(true);
-        selectingObject.SetBuiltOnTiles(tilemapManager.SelectedTiles);
-        selectingObject.SetOriginBuiltOnTile(tilemapManager.TilePos);
-        var tileWorldPos = tilemapManager.GetTileWorldPosition(selectingObject.OriginTileWhileHolding);
+
+        var newRuntimeData = new BuildObjectRuntimeData(
+            tilemapManager.TilePos,
+            tilemapManager.SelectedTiles,
+            selectingObject.BuildingRuntimeData.FlipValue
+        );
+        
+        selectingObject.UpdateRuntimeData(newRuntimeData);
+        
+        var tileWorldPos = tilemapManager.GetTileWorldPosition(selectingObject.BuildingRuntimeData.OriginTilePosition);
         selectingObject.SnapToTilePosition(tileWorldPos);
-        selectingObject.SetBuiltPosition(selectingObject.transform.position);
+        selectingObject.OverwriteBuiltDataWithRuntimeData();
         ResetBuildStateToIdle();
     }
 
