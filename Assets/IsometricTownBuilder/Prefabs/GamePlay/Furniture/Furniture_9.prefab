@@ -251,7 +251,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea0b6174540f92f4a99ab30f96864f45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildingObject
-  <BulidingId>k__BackingField: 9
+  <BuildingId>k__BackingField: 9
+  <CellType>k__BackingField: 2
   positionOffset: {x: 0.7, y: 0.2, z: 0}
   tilePosOffset: {x: 0.7, y: 0.2, z: 0}
   spriteRenderer: {fileID: 7063634735825866928}
@@ -273,13 +274,22 @@ MonoBehaviour:
     Y: 1
   - X: -1
     Y: 1
+  collider2D: {fileID: 4719948421209995789}
+  colliderOffset: {x: 0, y: 0}
+  flippedColliderOffset: {x: 0, y: 0}
   <HasBeenBuilt>k__BackingField: 0
-  <BuildingRuntimeData>k__BackingField:
-    <OriginTilePosition>k__BackingField: {x: 0, y: 0, z: 0}
+  <RuntimeBuildData>k__BackingField:
+    <OriginTilePosition>k__BackingField:
+      X: 0
+      Y: 0
+      Z: 0
     <BuiltOnTiles>k__BackingField: []
     <FlipValue>k__BackingField: 0
-  <BuiltData>k__BackingField:
-    <OriginTilePosition>k__BackingField: {x: 0, y: 0, z: 0}
+  <BuildData>k__BackingField:
+    <OriginTilePosition>k__BackingField:
+      X: 0
+      Y: 0
+      Z: 0
     <BuiltOnTiles>k__BackingField: []
     <FlipValue>k__BackingField: 0
 --- !u!61 &4719948421209995789
@@ -326,5 +336,5 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.74, y: 4.01}
+  m_Size: {x: 2.74, y: 2.61}
   m_EdgeRadius: 0

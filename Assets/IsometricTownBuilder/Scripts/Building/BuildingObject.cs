@@ -1,141 +1,133 @@
+#nullable enable
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-//TODO: Create runtime data for building obj for save / load and revert to when cancel building
-
-[Serializable]
-public class BuildObjectRuntimeData
-{
-   [field: SerializeField] public Vector3Int OriginTilePosition { get; private set; }
-   [field: SerializeField] public List<Vector3Int> BuiltOnTiles { get; private set; }
-   [field: SerializeField] public bool FlipValue { get; private set; }
-
-   public BuildObjectRuntimeData(
-      Vector3Int originTilePosition,
-      List<Vector3Int> builtOnTiles,
-      bool flipValue
-   )
-   {
-      OriginTilePosition = originTilePosition;
-   }
-
-   public void SetOriginalTilePosition(Vector3Int originTilePosition)
-   {
-      OriginTilePosition = originTilePosition;
-   }
-
-   public void SetBuiltOnTiles(List<Vector3Int> builtOnTiles)
-   {
-      BuiltOnTiles = builtOnTiles;
-   }
-   
-   public void SetFlipSpriteRenderer(bool flipValue)
-   {
-      FlipValue = flipValue;
-   }
-}
-
+[RequireComponent(typeof(Collider2D))]
 public class BuildingObject : MonoBehaviour
 {
-   [field:SerializeField] public int BulidingId { get; private set; }
-   [SerializeField] private Vector3 positionOffset;
-   [SerializeField] private Vector3 tilePosOffset;
-   [SerializeField] private SpriteRenderer spriteRenderer;
-   [field:SerializeField] private BuildSpec[] normalSpec;
-   [SerializeField] private BuildSpec[] flipSpec;
-   // [field:SerializeField] public bool FlipSpriteRenderer { get; private set; } = false;
-   [field:SerializeField] public bool HasBeenBuilt { get; private set; } = false;
-   // [field:SerializeField] public List<Vector3Int> BuiltOnTiles { get; private set; }
-   // [field:SerializeField] public Vector3 BuiltOnPos { get; private set; }
-   // [field:SerializeField] public Vector3Int OriginBuiltOnTile { get; private set; }
-   // [field:SerializeField] public Vector3Int OriginTileWhileHolding { get; private set; }
+    [field: FormerlySerializedAs("<BulidingId>k__BackingField")] 
+    [field: SerializeField] public int BuildingId { get; private set; }
 
-   [field: SerializeField] public BuildObjectRuntimeData BuildingRuntimeData { get; private set; } //to be used while building
-   [field: SerializeField] public BuildObjectRuntimeData BuiltData { get; private set; } //loaded / to be revert back to when cancel buliding
+    [field: SerializeField] public CellType CellType { get; private set; } 
+    [SerializeField] private Vector3 positionOffset;
+    [SerializeField] private Vector3 tilePosOffset;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private BuildSpec[] normalSpec;
+    [SerializeField] private BuildSpec[] flipSpec;
+    [Space]
+    [SerializeField] private Collider2D collider2D;
+    [SerializeField] private Vector2 colliderOffset;
+    [SerializeField] private Vector2 flippedColliderOffset;
+    
+    [field: SerializeField] public bool HasBeenBuilt { get; private set; } = false;
 
-   public void SetBuilt(bool value)
-   {
-      HasBeenBuilt = value;
-   }
-   
-   public void SetFlipSpriteRenderer(bool value)
-   {
-      BuildingRuntimeData.SetFlipSpriteRenderer(value);
-      spriteRenderer.flipX = BuildingRuntimeData.FlipValue;
-   }
+    [field: SerializeField] public BuildObjectRuntimeData RuntimeBuildData { get; private set; } //to be used while building
 
-   public BuildSpec[] GetBuildSpecs()
-   {
-      return BuildingRuntimeData.FlipValue ? flipSpec : normalSpec; 
-   }
+    [field: SerializeField] public BuildObjectRuntimeData BuildData { get; private set; } //loaded / to be fallback to when cancel buliding
 
-   public void UpdateRuntimeData(BuildObjectRuntimeData runtimeData)
-   {
-      BuildingRuntimeData =  runtimeData;
-   }
+    public void SetBuildData(BuildObjectRuntimeData buildData)
+    {
+        SetBuilt(true);
+        BuildData = buildData;
+        SetRendererFlipX(BuildData.FlipValue);
+    }
 
-   public void OverwriteBuiltDataWithRuntimeData()
-   {
-      UpdateBuiltOnData(BuildingRuntimeData);
-   }
+    public void SetBuilt(bool value)
+    {
+        HasBeenBuilt = value;
+    }
 
-   public void UpdateBuiltOnData(BuildObjectRuntimeData updatedData)
-   {
-      BuiltData = updatedData;
-      //TODO: everytime this got updated, the game will save, by boardManager
-      
-   }
-   
-   public void SetPosition(Vector3 screenToWorldPos)
-   {
-      var newPosition = new Vector3(screenToWorldPos.x,screenToWorldPos.y,0f) + positionOffset;
-      transform.position = newPosition;
-   }
+    public void SetFlipSpriteRenderer(bool value)
+    {
+        RuntimeBuildData.SetFlipSpriteRenderer(value);
+        SetRendererFlipX(RuntimeBuildData.FlipValue);
+    }
 
-   public void SnapToTilePosition(Vector3 tileWorldPos)
-   {
-      var newPosition = new Vector3(tileWorldPos.x, tileWorldPos.y, transform.position.z) + tilePosOffset;
-      transform.position = newPosition;
-   }
-   
-   
-   // public void SetBuiltOnTiles(List<Vector3Int> originTilePos)
-   // {
-   //    BuiltOnTiles = originTilePos;
-   // }
+    private void SetRendererFlipX(bool value)
+    {
+        spriteRenderer.flipX = value;
+        if (collider2D != null
+            && colliderOffset != Vector2.zero
+            && flippedColliderOffset != Vector2.zero
+           )
+        {
+            if (value)
+            {
+                collider2D.offset = flippedColliderOffset;
+            }
+            else
+            {
+                collider2D.offset = colliderOffset;
+            }
+        }
+    }
 
-   // public void SetBuiltPosition(Vector3 targetPos)
-   // {
-   //    BuiltOnPos = new Vector3(targetPos.x,targetPos.y,0f) + tilePosOffset;
-   // }
-   //
-   // public void SetRuntimeOriginTile(Vector3Int tilePos)
-   // {
-   //    buildingRuntimeData.OriginTile = tilePos;
-   // }
-   //
-   // public void SetBuiltOnOriginTile(Vector3Int tilePos)
-   // {
-   //    builtRuntimeData.OriginTile = tilePos;
-   // }
-   
-   private void OnValidate()
-   {
-      SetFlipSpriteRenderer(BuildingRuntimeData.FlipValue);
-      flipSpec = new BuildSpec[normalSpec.Length];
-      for(int i =0 ; i < normalSpec.Length; i++)
-      {
-         flipSpec[i].X =  normalSpec[i].Y;
-         flipSpec[i].Y =  normalSpec[i].X;
-      }
-   }
+    public BuildSpec[] GetBuildSpecs()
+    {
+        return RuntimeBuildData.FlipValue ? flipSpec : normalSpec;
+    }
+
+
+    public void CacheBuildToRuntimeData()
+    {
+        RuntimeBuildData = new BuildObjectRuntimeData(
+            originTilePosition: new Vector3Int(BuildData.OriginTilePosition.X, BuildData.OriginTilePosition.Y, BuildData.OriginTilePosition.Z),
+            builtOnTiles: BuildData.GetBuiltOnTiles().ToList(),
+            flipValue: BuildData.FlipValue
+        );
+    }
+
+    public void ClearRunTimeData()
+    {
+        RuntimeBuildData = new BuildObjectRuntimeData(
+            originTilePosition: default,
+            builtOnTiles: default,
+            flipValue: false
+        );
+    }
+
+    public void OverwriteOldBuildDataWithNewOne(BuildObjectRuntimeData updatedData)
+    {
+        var oldBuildData = BuildData; 
+        BoardManager.RemoveBuildData(oldBuildData);
+        BuildData = updatedData;
+        BoardManager.UpdateBuildDataDict(BuildingId,BuildData);
+    }
+
+    public void SetPosition(Vector3 screenToWorldPos)
+    {
+        var newPosition = new Vector3(screenToWorldPos.x, screenToWorldPos.y, 0f) + positionOffset;
+        transform.position = newPosition;
+    }
+
+    public void SnapToTilePosition(Vector3 tileWorldPos)
+    {
+        var newPosition = new Vector3(tileWorldPos.x, tileWorldPos.y, transform.position.z) + tilePosOffset;
+        transform.position = newPosition;
+    }
+
+    private void OnValidate()
+    {
+        if (collider2D == null)
+        {
+            collider2D = GetComponent<Collider2D>();
+        }
+
+        SetFlipSpriteRenderer(RuntimeBuildData.FlipValue);
+        flipSpec = new BuildSpec[normalSpec.Length];
+        for (int i = 0; i < normalSpec.Length; i++)
+        {
+            flipSpec[i].X = normalSpec[i].Y;
+            flipSpec[i].Y = normalSpec[i].X;
+        }
+    }
 }
 
 [Serializable]
 public struct BuildSpec
 {
-   public int X;
-   public int Y;
+    public int X;
+    public int Y;
 }

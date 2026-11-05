@@ -230,7 +230,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6249918358678697318}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -251,7 +251,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea0b6174540f92f4a99ab30f96864f45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildingObject
-  <BulidingId>k__BackingField: 1
+  <BuildingId>k__BackingField: 1
+  <CellType>k__BackingField: 2
   positionOffset: {x: 0, y: 0.5, z: 0}
   tilePosOffset: {x: 0, y: 0.5, z: 0}
   spriteRenderer: {fileID: 1335665664190139832}
@@ -265,13 +266,22 @@ MonoBehaviour:
     Y: 0
   - X: -1
     Y: 0
+  collider2D: {fileID: 5403344668535048690}
+  colliderOffset: {x: 0.7, y: -0.4}
+  flippedColliderOffset: {x: -0.83, y: -0.4}
   <HasBeenBuilt>k__BackingField: 0
-  <BuildingRuntimeData>k__BackingField:
-    <OriginTilePosition>k__BackingField: {x: 0, y: 0, z: 0}
+  <RuntimeBuildData>k__BackingField:
+    <OriginTilePosition>k__BackingField:
+      X: 0
+      Y: 0
+      Z: 0
     <BuiltOnTiles>k__BackingField: []
     <FlipValue>k__BackingField: 0
-  <BuiltData>k__BackingField:
-    <OriginTilePosition>k__BackingField: {x: 0, y: 0, z: 0}
+  <BuildData>k__BackingField:
+    <OriginTilePosition>k__BackingField:
+      X: 0
+      Y: 0
+      Z: 0
     <BuiltOnTiles>k__BackingField: []
     <FlipValue>k__BackingField: 0
 --- !u!61 &5403344668535048690
@@ -308,7 +318,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.7303368, y: -0.5056174}
+  m_Offset: {x: 0.7, y: -0.4}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.3078061, y: 0.6685391}
@@ -318,5 +328,5 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 2.66459, y: 2.4245992}
   m_EdgeRadius: 0

@@ -1,3 +1,4 @@
+#nullable enable
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -15,13 +16,11 @@ public class TilemapManager : MonoBehaviour
 
     [field: SerializeField] public Vector3Int TilePos { get; private set; } = Vector3Int.zero;
     [SerializeField] private List<Vector3Int> allTilePosList = new List<Vector3Int>();
-    public List<Vector3Int> SelectedTiles => allTilePosList;
-            
-    [Space] 
-    [SerializeField] private TileBase selectedTile;
+    public List<Vector3Int> AllTilePosList => allTilePosList;
+
+    [Space] [SerializeField] private TileBase selectedTile;
     [SerializeField] private bool hasSelected = false;
-    [Space] 
-    [SerializeField] private Vector3 screenToWorldPos;
+    [Space] [SerializeField] private Vector3 screenToWorldPos;
     [SerializeField] private Vector3 screenPos;
     [SerializeField] private Vector2 clickPos;
 
@@ -39,7 +38,11 @@ public class TilemapManager : MonoBehaviour
     private GameStateManager gameStateManager => gamePlayManager.GameStateManager;
 
     private PlayerInputHandler playerInput => GamePlayManager.Instance.PlayerInput;
-    private BuildingGameState? buildingGameState => gameStateManager?.GetGameStateFromType(GameStateType.Building) as BuildingGameState;
+
+    private BuildingGameState? buildingGameState =>
+        gameStateManager?.GetGameStateFromType(GameStateType.Building) as BuildingGameState;
+
+    private BoardRuleConfig boardRuleConfig => gamePlayManager.GameConfigContainer.BoardRuleConfig;
 
     public async UniTask InitializeAsync()
     {
@@ -52,7 +55,7 @@ public class TilemapManager : MonoBehaviour
         SetupBuildableTileDict();
         playerInput.InputPositionUpdated += UpdateTileColorOnHover;
         playerInput.OnResetHolding += OnInputResetHolding;
-        
+
         if (gameplayUI != null && gameplayUI.BuildingOptionPanel != null)
         {
             gameplayUI.BuildingOptionPanel.OnAcceptBuild += OnBuildAccept;
@@ -60,7 +63,7 @@ public class TilemapManager : MonoBehaviour
         }
 
         buildObjSelecter.OnSelectedObjFlip += OnFlip;
-        
+
         IsInitialized = true;
     }
 
@@ -68,20 +71,20 @@ public class TilemapManager : MonoBehaviour
     {
         Debug.Log($"[TileMap] {GetType().Name}.OnFlip -> flipped: {flipped}".LogColor(new Color(1f, 0.7f, 0.61f)));
         //TODO: Update runtime data
-        TilePos = buildObjSelecter.SelectedObject.BuildingRuntimeData.OriginTilePosition;
-        GetNewBuildSpecTilesAndColorThem(TilePos,buildObjSelecter.SelectedObject);
+        TilePos = buildObjSelecter.SelectedObject.RuntimeBuildData.GetVector3OriginTile();
+        GetNewBuildSpecTilesAndColorThem(TilePos, buildObjSelecter.SelectedObject);
     }
 
     private void OnBuildCancel()
     {
         Debug.Log($"[TileMap] {GetType().Name}.OnBuildCancel".LogColor(new Color(1f, 0.19f, 0.38f)));
-        ResetAllCachedTileColorToDefault();
+        ResetTilePosAndNeighbourToDefaultColor();
     }
 
     private void OnBuildAccept()
     {
         Debug.Log($"[TileMap] {GetType().Name}.OnBuildAccept".LogColor(new Color(0.81f, 1f, 0.36f)));
-        ResetAllCachedTileColorToDefault();
+        // ResetTilePosAndNeighbourToDefaultColor();
     }
 
     private void OnInputResetHolding()
@@ -95,18 +98,8 @@ public class TilemapManager : MonoBehaviour
         {
             return;
         }
-        
-        ResetAllCachedTileColorToDefault();
-    }
 
-    private void ResetAllCachedTileColorToDefault()
-    {
-        tilemap.SetColor(TilePos, defaultColor);
-        foreach (var neighbourPos in allTilePosList)
-        {
-            tilemap.SetColor(neighbourPos, defaultColor);
-        }
-        allTilePosList.Clear();
+        ResetTilePosAndNeighbourToDefaultColor();
     }
 
     private void SetupBuildableTileDict()
@@ -153,29 +146,41 @@ public class TilemapManager : MonoBehaviour
         {
             screenToWorldPos = camera.ScreenToWorldPoint(screenPos);
             TilePos = tilemap.WorldToCell(screenToWorldPos);
-            buildObjSelecter.SelectedObject.BuildingRuntimeData.SetOriginalTilePosition(TilePos);
+            buildObjSelecter.SelectedObject.RuntimeBuildData.SetOriginalTilePosition(TilePos);
         }
-        
-        GetNewBuildSpecTilesAndColorThem(TilePos,buildObjSelecter.SelectedObject);
+
+        GetNewBuildSpecTilesAndColorThem(TilePos, buildObjSelecter.SelectedObject);
     }
 
-    private void GetNewBuildSpecTilesAndColorThem(Vector3Int tilePos,BuildingObject selectedBuilding)
+    private void GetNewBuildSpecTilesAndColorThem(Vector3Int tilePos, BuildingObject selectedBuilding)
     {
         if (selectedBuilding == null)
         {
             return;
         }
+
         ResetTilePosAndNeighbourToDefaultColor();
-        IsCurrentSpotBuildable = IsBuildableSpec(tilePos, selectedBuilding.GetBuildSpecs(), out var tilePosResult);
+        IsCurrentSpotBuildable = IsBuildableSpec(
+            origin: tilePos,
+            buildSpecs: selectedBuilding.GetBuildSpecs(),
+            buildCellType: selectedBuilding.CellType,
+            tilePosResult: out var tilePosResult
+        );
         allTilePosList = tilePosResult.ToList();
         foreach (var neighbourPos in tilePosResult)
         {
-            tilemap.SetTileFlags(neighbourPos, TileFlags.None);
-            tilemap.SetColor(neighbourPos, IsCurrentSpotBuildable? buildableColor:noneBuildableColor);
+            tilemap.SetTileFlags(position: neighbourPos, flags: TileFlags.None);
+            tilemap.SetColor(position: neighbourPos,
+                color: IsCurrentSpotBuildable ? buildableColor : noneBuildableColor);
         }
     }
 
-    public bool IsBuildableSpec(Vector3Int origin,IEnumerable<BuildSpec> buildSpecs,out IEnumerable<Vector3Int> tilePosResult)
+    public bool IsBuildableSpec(
+        Vector3Int origin,
+        IEnumerable<BuildSpec> buildSpecs,
+        CellType buildCellType,
+        out IEnumerable<Vector3Int> tilePosResult
+    )
     {
         bool areBuildable = true;
         var tilePosResultList = new List<Vector3Int>();
@@ -188,9 +193,37 @@ public class TilemapManager : MonoBehaviour
                 // Debug.LogError($"{GetType().Name}.IsBuildableSpec at pos: {checkTilePos} isn't one of the buildables".LogColor(Color.red));
                 areBuildable = false;
             }
+            else
+            {
+                bool gotBuildableTile = buildableTiles.TryGetValue(checkTilePos, out var data);
+                if (gotBuildableTile && data.CellType.HasFlag(buildCellType) == false)
+                {
+                    Debug.Log($"[TileMap] {GetType().Name} buildCellType: {buildCellType} | data: {data.CellType}".LogColor(new Color(0.51f, 0.96f, 1f)));
+                    areBuildable = false;
+                }
+
+                //TODO: if able, will refactor this into BoardRuleChecker, check from list of rules that get their own rule comliance implementation
+                
+                //check exceed board rule station's count
+                if (buildCellType.HasFlag(CellType.Station))
+                {
+                    if (!gamePlayManager.BoardRuleChecker.StillAbleToAffordStationCount())
+                    {
+                        areBuildable = false;
+                    }
+                }
+            }
         }
 
         tilePosResult = tilePosResultList;
+
+        //TODO: Check with boards
+        if (areBuildable)
+        {
+            areBuildable = BoardManager.AreTilesFree(tilePosResult);
+        }
+
+
         return areBuildable;
     }
 
@@ -201,18 +234,18 @@ public class TilemapManager : MonoBehaviour
             //re-lock color for selected tile 
             tilemap.SetColor(TilePos, defaultColor);
         }
-        
+
         foreach (var neighbourPos in allTilePosList)
         {
             tilemap.SetColor(neighbourPos, defaultColor);
         }
     }
-    
+
     public Vector3 GetTileWorldPosition(Vector3Int tilePosition)
     {
         return tilemap.GetCellCenterWorld(tilePosition);
     }
-    
+
 
 #if UNITY_EDITOR && false
     private void OnValidate()

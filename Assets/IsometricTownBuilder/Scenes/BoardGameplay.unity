@@ -12536,18 +12536,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3141020317432372874, guid: 4f97dc39ad7d24646810a2bbaa0c4aac, type: 3}
-      propertyPath: m_Size.x
-      value: 4.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 3141020317432372874, guid: 4f97dc39ad7d24646810a2bbaa0c4aac, type: 3}
-      propertyPath: m_Offset.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3141020317432372874, guid: 4f97dc39ad7d24646810a2bbaa0c4aac, type: 3}
-      propertyPath: m_Offset.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3437021731126804826, guid: 4f97dc39ad7d24646810a2bbaa0c4aac, type: 3}
       propertyPath: m_LocalPosition.x
       value: 11.14
@@ -12588,10 +12576,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4606631871711168653, guid: 4f97dc39ad7d24646810a2bbaa0c4aac, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: ccf98ade6762ca240a795ebb0794dbcb, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13391,6 +13375,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3968753879755735414, guid: 6f1fd32654715d4499f9fb080c358160, type: 3}
+      propertyPath: <BuildingRuntimeData>k__BackingField.<FlipValue>k__BackingField
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7520690955047901814, guid: 6f1fd32654715d4499f9fb080c358160, type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7744193253861264263, guid: 6f1fd32654715d4499f9fb080c358160, type: 3}
       propertyPath: m_Name
       value: Furniture_10
@@ -13668,6 +13660,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5100989197318264824, guid: 5c4882fd0084819409ee299e8342c47d, type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5741238898713394161, guid: 5c4882fd0084819409ee299e8342c47d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.62
@@ -13706,6 +13702,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5741238898713394161, guid: 5c4882fd0084819409ee299e8342c47d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5925627015395839613, guid: 5c4882fd0084819409ee299e8342c47d, type: 3}
+      propertyPath: <BuildingRuntimeData>k__BackingField.<FlipValue>k__BackingField
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

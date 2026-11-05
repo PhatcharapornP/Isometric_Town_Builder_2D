@@ -13,8 +13,9 @@ public class GamePlayManager : MonoBehaviour
     [SerializeField] private TilemapManager tilemapManager;
     [Space, Header("GameConfigs")] 
     [SerializeField] private GameConfigContainer gameConfigContainer;
-
     [SerializeField] private PlaceableObjectConfigData testingPlaceableObj;
+    private BuildingLoader buildingLoader;
+    private BoardRuleChecker boardRuleChecker;
 
     public GameStateManager? GameStateManager => gameStateManager;
     public PlayerInputHandler? PlayerInput => playerInput;
@@ -24,8 +25,11 @@ public class GamePlayManager : MonoBehaviour
     public GameConfigContainer? GameConfigContainer => gameConfigContainer;
     
     public TilemapManager? TilemapManager => tilemapManager;
+    
+    public BoardRuleChecker BoardRuleChecker => boardRuleChecker;
 
     public static GamePlayManager Instance;
+    
 
     private void Start()
     {
@@ -42,6 +46,14 @@ public class GamePlayManager : MonoBehaviour
         initTasks.Add(tilemapManager.InitializeAsync());
         
         await UniTask.WhenAll(initTasks);
+        boardRuleChecker = new BoardRuleChecker(gameConfigContainer.BoardRuleConfig);
+        buildingLoader = gameObject.AddComponent<BuildingLoader>();
+        buildingLoader.Initialize(
+            catalogConfig: gameConfigContainer.BuildingCatalogConfig,
+            tileMap: tilemapManager,
+            ruleChecker: boardRuleChecker
+        );
+        buildingLoader.SpawnSavedBuildingIntoGame();
         await GoToIdleWhenReadyAsync();
     }
 
