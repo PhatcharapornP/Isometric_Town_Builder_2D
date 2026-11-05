@@ -1,4 +1,5 @@
 #nullable enable
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -10,6 +11,11 @@ public class GamePlayManager : MonoBehaviour
     [SerializeField] private GameplayUIManager? gameplayUIManager;
     [SerializeField] private PlayerInputHandler? playerInput;
     [SerializeField] private BuildingObjectSelecter? buildingObjSelecter;
+    [SerializeField] private TilemapManager tilemapManager;
+    [Space, Header("GameConfigs")] 
+    [SerializeField] private GameConfigContainer gameConfigContainer;
+
+    [SerializeField] private PlaceableObjectConfigData testingPlaceableObj;
 
     public GameStateManager? GameStateManager => gameStateManager;
     public BoardManager? BoardManager => boardManager;
@@ -17,27 +23,29 @@ public class GamePlayManager : MonoBehaviour
 
     public GameplayUIManager? GamePlayUI => gameplayUIManager;
     public BuildingObjectSelecter? BuildingObjSelecter => buildingObjSelecter;
-
-    [Space, Header("GameConfigs")] 
-    [SerializeField] private GameConfigContainer gameConfigContainer;
+    public GameConfigContainer? GameConfigContainer => gameConfigContainer;
+    
+    public TilemapManager? TilemapManager => tilemapManager;
 
     public static GamePlayManager Instance;
-
-    [Space, Header("testing input")] 
-    [SerializeField] private Vector2Int gridPosition = Vector2Int.zero;
-
-    [SerializeField] private PlaceableObjectConfigData testingPlaceableObj;
-
-    [Space, Header("Output")]
-    [SerializeField] private bool placeable = false;
-    [SerializeField] private Vector2Int[]? cellPositionOutput;
 
     private void Start()
     {
         Instance = this;
         gameStateManager?.Initialize();
         boardManager?.Initialize();
-        GoToIdleWhenReadyAsync().Forget();
+        InitializeAllManagers().Forget();
+    }
+
+    private async UniTask InitializeAllManagers()
+    {
+        var initTasks = new List<UniTask>();
+        initTasks.Add(gameplayUIManager.InitializeAsync());
+        initTasks.Add(buildingObjSelecter.InitializeAsync());
+        initTasks.Add(tilemapManager.InitializeAsync());
+        
+        await UniTask.WhenAll(initTasks);
+        await GoToIdleWhenReadyAsync();
     }
 
     private async UniTask GoToIdleWhenReadyAsync()

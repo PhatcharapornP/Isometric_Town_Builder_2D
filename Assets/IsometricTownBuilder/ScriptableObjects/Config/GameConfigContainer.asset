@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: GameConfigContainer
   m_EditorClassIdentifier: Assembly-CSharp::GameConfigContainer
   boardConfig: {fileID: 11400000, guid: 72ac87938fd15ec49959dc8824efb725, type: 2}
+  buildingCatalogConfig: {fileID: 11400000, guid: 2d764b0d281a54948b35c58e122a63f5, type: 2}

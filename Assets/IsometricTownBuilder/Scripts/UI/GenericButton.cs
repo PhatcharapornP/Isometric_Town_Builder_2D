@@ -14,7 +14,7 @@ public class GenericButton : MonoBehaviour
 {
     private const float RAPID_CLICK_BLOCK_DURATION = 0.1f;
 
-    [SerializeField] private bool blockRapidClick = true;
+    [SerializeField] protected bool blockRapidClick = true;
     [SerializeField] private TextMeshProUGUI? buttonText;
     [SerializeField] private Button? button;
 
@@ -65,7 +65,7 @@ public class GenericButton : MonoBehaviour
             return;
         }
 
-        Debug.Log($"{GetType().Name}.OnButtonClicked() {gameObject.name} ClickedAction null?: {clickedAction == null}".LogColor(Color.forestGreen), gameObject);
+        // Debug.Log($"{GetType().Name}.OnButtonClicked() {gameObject.name} ClickedAction null?: {clickedAction == null}".LogColor(Color.forestGreen), gameObject);
         clickedAction?.Invoke();
         PlaySfx();
     }
@@ -73,15 +73,14 @@ public class GenericButton : MonoBehaviour
     public void AddToClickAction(Action action)
     {
         clickedAction += action;
-        Debug.Log($"{GetType().Name}.AddToClickAction() {gameObject.name} ClickedAction null?: {clickedAction == null}".LogColor(Color.bisque), gameObject);
+        // Debug.Log($"{GetType().Name}.AddToClickAction() {gameObject.name} ClickedAction null?: {clickedAction == null}".LogColor(Color.bisque), gameObject);
     }
 
     public void RemoveFromClickAction(Action action)
     {
         
         clickedAction -= action;
-        
-        Debug.Log($"{GetType().Name}.RemoveFromClickAction() {gameObject.name} ClickedAction null?: {clickedAction == null}".LogColor(Color.softRed), gameObject);
+        // Debug.Log($"{GetType().Name}.RemoveFromClickAction() {gameObject.name} ClickedAction null?: {clickedAction == null}".LogColor(Color.softRed), gameObject);
     }
     
     public void AddToOnClickAsync(Func<CancellationToken, UniTask> onClickAsync)
@@ -106,12 +105,15 @@ public class GenericButton : MonoBehaviour
         }
     }
 
-    public void ClearCallback([CallerMemberName] string caller = "")
+    public void ClearCallback(
+#if UNITY_EDITOR
+        [CallerMemberName] string caller = ""
+#endif
+        )
     {
         clickedAction = null;
         onClickAsync = null;
         
-        Debug.Log($"{GetType().Name}.ClearCallback() {gameObject.name} from: {caller}".LogColor(Color.red),gameObject);
     }
 
     private bool TryPassRapidClickGate()

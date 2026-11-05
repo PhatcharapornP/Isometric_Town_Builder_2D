@@ -75,10 +75,14 @@ public class DebugCommandMode : MonoBehaviour
         }
         
 
-        debugText.SetText(debugInitialized + $" " + $" {gameStateDebug}" + $"  {buildStateDebug}" +
+        debugText.SetText(debugInitialized + $" " + 
+                          $" \n {gameStateDebug}" + 
+                          $" \n {buildStateDebug}" +
                           $" \n {inputDebug}" +
-                          $" \n {screenPos}" + $" {clickPos}" +
-                          $" \n {touchNull}" + $" {mouseNull}"
+                          $" \n {screenPos}" +
+                          $" \n {clickPos}" +
+                          $" \n {touchNull}" + 
+                          $" \n {mouseNull}"
                           );
     }
 

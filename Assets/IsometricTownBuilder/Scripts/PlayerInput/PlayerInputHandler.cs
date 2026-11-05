@@ -21,6 +21,7 @@ public class PlayerInputHandler : MonoBehaviour
     [field: SerializeField] public bool MuteInput { get; private set; } = false;
 
     [SerializeField] private float holdingTimer = 1f;
+    [SerializeField] private float minHoldTimer = .2f;
     [SerializeField] private float currentHoldingTime = 0f;
 
     [Space] [SerializeField] private Vector3 screenToWorldPos = Vector3.zero;
@@ -91,19 +92,27 @@ public class PlayerInputHandler : MonoBehaviour
     {
         if (!isHolding) //start holding
         {
+            Debug.Log($"[Input] UpdateHoldingTimer -> trigger OnStartHolding".LogColor(new Color(0.69f, 0.93f, 0.75f)));
             currentHoldingTime = 0;
             isHolding = true;
-            Debug.Log($"{GetType().Name}.UpdateHoldingTimer -> invoking start holding".LogColor(Color.cornflowerBlue));
             OnStartHolding?.Invoke();
         }
         else //while Holding
         {
-            WhileHolding?.Invoke(currentHoldingTime);
             currentHoldingTime += Time.deltaTime;
 
-            if (currentHoldingTime >= holdingTimer)
+            if (currentHoldingTime >= minHoldTimer)
             {
+                WhileHolding?.Invoke(currentHoldingTime);    
+            }
+            
+
+            if (currentHoldingTime >= holdingTimer && isHolding)
+            {
+                Debug.Log($"[Input] UpdateHoldingTimer -> trigger OnEndHolding".LogColor(new Color(0.93f, 0.41f, 0.29f)));
                 OnEndHolding?.Invoke(ScreenPos);
+                currentHoldingTime = 0;
+                isHolding = false;
             }
         }
     }
@@ -114,12 +123,12 @@ public class PlayerInputHandler : MonoBehaviour
 #endif
     )
     {
+#if UNITY_EDITOR
+        Debug.Log($"[Input] ResetHoldingState() -> called from: {caller} trigger OnResetHolding".LogColor(Color.orange));
+#endif
         isHolding = false;
         currentHoldingTime = 0;
         OnResetHolding?.Invoke();
-#if UNITY_EDITOR
-        Debug.Log($"{GetType().Name}.ResetHoldingState() -> called from: {caller}".LogColor(Color.orange));
-#endif
     }
 
     private void UpdateInputPosition()

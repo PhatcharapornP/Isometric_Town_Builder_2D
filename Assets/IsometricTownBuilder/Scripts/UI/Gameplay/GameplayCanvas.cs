@@ -8,11 +8,13 @@ public class GameplayCanvas : MonoBehaviour
 {
     [SerializeField] private Canvas canvas;
     [SerializeField] private BuildingOptionPanel buildingOptionPanel;
+    [SerializeField] private BuildCatalogPanel buildCatalogPanel;
     [SerializeField] private Image holdingImage;
     [field: SerializeField] public bool IsInitialized { get; private set; } = false;
     private GameplayUIManager gameplayUIManager => GamePlayManager.Instance.GamePlayUI;
     private Camera targetCamera => Camera.main;
     public BuildingOptionPanel BuildingOptionPanel => buildingOptionPanel;
+    public  BuildCatalogPanel BuildCatalogPanel => buildCatalogPanel;
 
     private void Start()
     {
@@ -23,6 +25,7 @@ public class GameplayCanvas : MonoBehaviour
     {
         await UniTask.WaitUntil(() => gameplayUIManager != null);
         canvas = GetComponent<Canvas>();
+        await buildCatalogPanel.Initialize();
         gameplayUIManager.SetGamePlayUI(this);
         buildingOptionPanel.Initialize(canvas);
         IsInitialized = true;

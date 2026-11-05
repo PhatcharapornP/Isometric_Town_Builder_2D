@@ -13,7 +13,7 @@ public class BuildingOptionPanel : MonoBehaviour
 
     public event Action? OnAcceptBuild;
     public event Action? OnCancelBuild;
-    public event Action? OnFlipBuild;
+    public event Action? OnFlipBuildAction;
 
     [field: SerializeField] public bool IsInitialized { get; private set; } = false;
     public bool IsShowing => gameObject.activeInHierarchy;
@@ -26,22 +26,40 @@ public class BuildingOptionPanel : MonoBehaviour
 
     private void OnEnable()
     {
-        Debug.Log($"{GetType().Name}.OnEnable OnAcceptBuild null?: {OnAcceptBuild == null}" +
-                  $"\n OnCancelBuild null?: {OnCancelBuild == null}" +
-                  $"\n OnFlipBuild null?: {OnFlipBuild == null}");
-        acceptButton.AddToClickAction(OnAcceptBuild);
-        cancelButton.AddToClickAction(OnCancelBuild);
-        flipButton.AddToClickAction(OnFlipBuild);
-     
+        if (OnAcceptBuild != null)
+        {
+            acceptButton.AddToClickAction(OnAcceptBuild);
+        }
+
+        if (OnCancelBuild != null)
+        {
+            cancelButton.AddToClickAction(OnCancelBuild);
+        }
+
+        if (OnFlipBuildAction != null)
+        {
+            flipButton.AddToClickAction(OnFlipBuildAction);
+        }
     }
 
     private void OnDisable()
     {
-        acceptButton.RemoveFromClickAction(OnAcceptBuild);
-        cancelButton.RemoveFromClickAction(OnCancelBuild);
-        flipButton.RemoveFromClickAction(OnFlipBuild);
-    }
+        if (OnAcceptBuild != null)
+        {
+            acceptButton.RemoveFromClickAction(OnAcceptBuild);
+        }
 
+        if (OnCancelBuild != null)
+        {
+            cancelButton.RemoveFromClickAction(OnCancelBuild);
+        }
+
+        if (OnFlipBuildAction != null)
+        {
+            flipButton.RemoveFromClickAction(OnFlipBuildAction);
+        }
+    }
+   
     public void EnableOptionPanel(bool enable
 #if UNITY_EDITOR
     ,[CallerMemberName] string caller = ""
@@ -56,7 +74,7 @@ public class BuildingOptionPanel : MonoBehaviour
         gameObject.SetActive(enable);
         
 #if UNITY_EDITOR
-        Debug.Log($"====>>> {GetType().Name}.EnableOptionPanel({enable}) from: {caller}".LogColor(Color.cornflowerBlue));
+        Debug.Log($"[BuildOptions] {GetType().Name}.EnableOptionPanel({enable}) from: {caller}".LogColor(new Color(0.45f, 0.93f, 0.26f)));
 #endif
     }
 

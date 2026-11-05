@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        Debug.Log("GameManager Awake".LogColor(new Color(0.35f, 1f, 0.6f)),gameObject);
         DontDestroyOnLoad(gameObject);
     }
 

@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildingObject
   positionOffset: {x: 0, y: 1.5, z: 0}
-  <FlipSpriteRenderer>k__BackingField: 0
+  tilePosOffset: {x: 0, y: 1.5, z: 0}
   spriteRenderer: {fileID: 3149060424369449516}
   normalSpec:
   - X: 0
@@ -56,6 +56,12 @@ MonoBehaviour:
   flipSpec:
   - X: 0
     Y: 0
+  <FlipSpriteRenderer>k__BackingField: 0
+  <HasBeenBuilt>k__BackingField: 0
+  <BuiltOnTiles>k__BackingField: []
+  <BuiltOnPos>k__BackingField: {x: 0, y: 0, z: 0}
+  <OriginTileWhileHolding>k__BackingField: {x: 0, y: 0, z: 0}
+  <OriginBuiltOnTile>k__BackingField: {x: 0, y: 0, z: 0}
 --- !u!61 &37315826072558768
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -41,5 +41,4 @@ public enum BuildState
     Selecting,
     Building,
     HoldingSelectedBuilding,
-    
 }
