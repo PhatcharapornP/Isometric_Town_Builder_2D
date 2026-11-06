@@ -19,14 +19,13 @@ public class GameplayUIManager : MonoBehaviour
 
     public QuizPopup? QuizPopup;
     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-
     public async UniTask InitializeAsync()
     {
         await UniTask.WaitUntil(() => gameplayCanvas != null
                                       && gameplayCanvas.IsInitialized
                                       && playerInput != null
-                                      && gameplayCanvas.BuildingOptionPanel != null);
+                                      && gameplayCanvas.BuildingOptionPanel != null
+        );
 
         BuildingOptionPanel = gameplayCanvas.BuildingOptionPanel;
         gameplayCanvas.ExitDestroyModeButton.AddToClickAction(GoToIdleFromDestroyBuildingState);
@@ -54,15 +53,6 @@ public class GameplayUIManager : MonoBehaviour
     
     private void OnInputStartHolding()
     {
-        if (buildingGameState == null)
-        {
-            return;
-        }
-        // if (buildingGameState.CurrentBuildState is BuildState.Building)
-        // {
-        //     //TODO: show build options
-        //     OpenBuildOptionsOnPressed();
-        // }
     }
 
     private void UpdateUIWhilePlayerHoldingInput(float timer)
@@ -95,25 +85,21 @@ public class GameplayUIManager : MonoBehaviour
     {
         if (gameplayManager == null)
         {
-            Debug.LogError($"[GameplayUI] OpenBuildOptionsOnPressed rejected gameplay manager null".LogColor(Color.red));
             return;
         }
 
         if (playerInput == null)
         {
-            Debug.LogError($"[GameplayUI] OpenBuildOptionsOnPressed rejected player input null".LogColor(Color.red));
             return;
         }
 
         if (gameplayManager.BuildingObjSelecter == null)
         {
-            Debug.LogError($"[GameplayUI] OpenBuildOptionsOnPressed rejected on build obj selector null".LogColor(Color.red));
             return;
         }
 
         if (gameplayManager.BuildingObjSelecter.SelectedObject == null)
         {
-            Debug.LogError($"[GameplayUI] OpenBuildOptionsOnPressed rejected SelectedObject null".LogColor(Color.red));
             return;
         }
 
@@ -126,31 +112,6 @@ public class GameplayUIManager : MonoBehaviour
         gameplayCanvas.BuildingOptionPanel.EnableOptionPanel(true);
     }
 
-    private void HandleBuildOptionPanelOnMove()
-    {
-        if (gameplayManager == null)
-        {
-            return;
-        }
-
-        if (gameplayManager.BuildingObjSelecter == null)
-        {
-            return;
-        }
-
-        if (gameplayManager.BuildingObjSelecter.SelectedObject == null)
-        {
-            return;
-        }
-
-        if (playerInput == null)
-        {
-            return;
-        }
-        
-        gameplayCanvas.BuildingOptionPanel.SetPanelPositionFromScreenPosition(playerInput.ScreenPos);
-    }
-
     private void HandleHoldingImage(float timer)
     {
         if (playerInput == null)
@@ -158,7 +119,6 @@ public class GameplayUIManager : MonoBehaviour
             return;
         }
 
-        // bool hasAvailableBuildingToPickup = gameplayManager.BuildingObjSelecter.CheckForAvailableBuildingToPickup(playerInput.ScreenPos);
         if (gameplayManager.GameStateManager.CurrentState.StateType is not GameStateType.Building)
         {
             return;
@@ -182,8 +142,6 @@ public class GameplayUIManager : MonoBehaviour
             gameplayCanvas.SetHoldingImageValue(timer);
         }
     }
-
-    
 
     public void SetGamePlayUI(GameplayCanvas gameplayCanvas)
     {

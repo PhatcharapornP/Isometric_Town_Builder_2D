@@ -93,7 +93,6 @@ public class BuildingObject : MonoBehaviour
         return RuntimeBuildData.FlipValue ? flipSpec : normalSpec;
     }
 
-
     public void CacheBuildToRuntimeData()
     {
         RuntimeBuildData = new BuildObjectRuntimeData(

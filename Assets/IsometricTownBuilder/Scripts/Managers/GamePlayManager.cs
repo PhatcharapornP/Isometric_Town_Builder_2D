@@ -1,5 +1,4 @@
 #nullable enable
-using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -31,7 +30,6 @@ public class GamePlayManager : MonoBehaviour
 
     public static GamePlayManager Instance;
     public bool IsInitialized { get; private set; } = false;
-    
 
     private void Start()
     {

@@ -91,7 +91,6 @@ public class PlayerInputHandler : MonoBehaviour
     {
         if (!isHolding) //start holding
         {
-            // Debug.Log($"[Input] UpdateHoldingTimer -> trigger OnStartHolding".LogColor(new Color(0.69f, 0.93f, 0.75f)));
             currentHoldingTime = 0;
             isHolding = true;
             OnStartHolding?.Invoke();
@@ -104,11 +103,9 @@ public class PlayerInputHandler : MonoBehaviour
             {
                 WhileHolding?.Invoke(currentHoldingTime);    
             }
-            
 
             if (currentHoldingTime >= holdingTimer && isHolding)
             {
-                // Debug.Log($"[Input] UpdateHoldingTimer -> trigger OnEndHolding".LogColor(new Color(0.93f, 0.41f, 0.29f)));
                 OnEndHolding?.Invoke(ScreenPos);
                 currentHoldingTime = 0;
                 isHolding = false;
@@ -116,15 +113,9 @@ public class PlayerInputHandler : MonoBehaviour
         }
     }
 
-    private void ResetHoldingState(
-// #if UNITY_EDITOR
-//         [CallerMemberName] string caller = ""
-// #endif
-    )
+    private void ResetHoldingState()
     {
-// #if UNITY_EDITOR
-//         Debug.Log($"[Input] ResetHoldingState() -> called from: {caller} trigger OnResetHolding".LogColor(Color.orange));
-// #endif
+
         isHolding = false;
         currentHoldingTime = 0;
         OnResetHolding?.Invoke();

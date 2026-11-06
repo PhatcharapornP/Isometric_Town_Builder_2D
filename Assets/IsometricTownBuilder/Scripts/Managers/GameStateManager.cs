@@ -1,5 +1,4 @@
 #nullable enable
-using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -53,11 +52,7 @@ public class GameStateManager : MonoBehaviour
         gameStateDict.Add(GameStateType.LoadingSave, loadingSave);
     }
 
-    public void GoToState(GameStateType goToState
-    #if UNITY_EDITOR
-        ,[CallerMemberName] string caller = ""
-    #endif
-    )
+    public void GoToState(GameStateType goToState)
     {
         if (currentState != null)
         {
@@ -68,10 +63,6 @@ public class GameStateManager : MonoBehaviour
 
             currentState.Exit();
         }
-        
-#if UNITY_EDITOR
-        Debug.Log($"[GameStateManager] {GetType().Name}.GoToState({goToState.ToString()}) from: {caller}".LogColor(new Color(1f, 0.87f, 0.46f)));
-#endif
 
         currentState = GetGameStateFromType(goToState);
         if (currentState == null)

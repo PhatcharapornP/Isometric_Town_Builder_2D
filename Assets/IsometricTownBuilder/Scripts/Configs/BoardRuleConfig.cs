@@ -8,7 +8,7 @@ public class BoardRuleConfig : ScriptableObject
     [field: SerializeField] public bool CanBuildSameStation { get; private set; } = false;
 }
 
-//TODO: Need to find a away to comply with this rule, would love to implement system to support each type of the rule type later
+//TODO: refactor for other to comply with this rule, would love to implement system to support each type of the rule type later
 //but will do the simplest way as much as possible
 public class BoardRuleChecker
 {
@@ -29,6 +29,10 @@ public class BoardRuleChecker
 
     public void AddToBuiltStationId(int buildingId)
     {
+        if (stationIdList.Contains(buildingId))
+        {
+            return;
+        }
         stationIdList.Add(buildingId);
     }
 

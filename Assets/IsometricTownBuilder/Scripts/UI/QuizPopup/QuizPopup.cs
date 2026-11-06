@@ -4,10 +4,6 @@ using TMPro;
 using UnityEngine;
 
 //TODO: Refactor this to be contain in some container or DI later
-/// <summary>
-/// This only shows the question and open to be answer button sub only
-/// </summary>
-
 public class QuizPopup : MonoBehaviour
 {
    [SerializeField] private TextMeshProUGUI headerText;
@@ -20,7 +16,7 @@ public class QuizPopup : MonoBehaviour
    public Action<int> OnClickAnswer;
 
    public bool IsShowingQuizPopup => gameObject.activeInHierarchy;
-
+   
    public void ShowQuizPopup(QuizPopupDetail popupDetail)
    {
       headerText.SetText(popupDetail.HeaderText);
@@ -29,12 +25,17 @@ public class QuizPopup : MonoBehaviour
       answerTwo.SetButtonText(popupDetail.answerTwoText);
       answerThree.SetButtonText(popupDetail.answerThreeText);
       answerFour.SetButtonText(popupDetail.answerFourText);
+      
+      
+      EnableQuizPopup(true);
+   }
+
+   private void OnEnable()
+   {
       answerOne.AddToClickAction(ClickAnswerOne);
       answerTwo.AddToClickAction(ClickAnswerTwo);
       answerThree.AddToClickAction(ClickAnswerThree);
       answerFour.AddToClickAction(ClickAnswerFour);
-      
-      EnableQuizPopup(true);
    }
 
    private void ClickAnswerOne()

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
-using UnityEngine;
 
 public class QuizGameState : BaseGameState
 {
@@ -45,11 +44,9 @@ public class QuizGameState : BaseGameState
     {
         if (!isInitialized)
         {
-            Debug.Log($"{GetType().Name}.OnEnter() isInitialized: {isInitialized}".LogColor(Color.red));
             return;
         }
         
-        Debug.Log($"{GetType().Name}.OnEnter() isInitialized: {isInitialized}".LogColor(Color.greenYellow));
         GoToNextQuestion();
     }
 
@@ -58,7 +55,6 @@ public class QuizGameState : BaseGameState
         var questionDetail = quizHandler.GetNextQuestion();
         if (questionDetail == null)
         {
-            Debug.LogError($"[QuizHandler] GoToNextQuestion() returned null".LogColor(Color.darkOrange));
             NoMoreQuizGoToIdle();
 
             return;
@@ -69,7 +65,8 @@ public class QuizGameState : BaseGameState
     private void NoMoreQuizGoToIdle()
     {
         gameplayUIManager.EnableQuizPopup(false);
-        gameplayUIManager.ShowMidScreenText("ผ่านแล้ว");
+        //should've been localized, if have time...
+        gameplayUIManager.ShowMidScreenText("You've passed");
         gameStateManager.GoToState(GameStateType.Idle);
     }
 
@@ -86,7 +83,6 @@ public class QuizGameState : BaseGameState
 
     public override void Exit()
     {
-        Debug.Log($"{GetType().Name}.OnExit()");
         quizHandler.SaveQuizData();
     }
 }
@@ -96,7 +92,7 @@ public class QuizHandler
     private QuizQuestions quizQuestions;
     private SavedQuizData? runtimeSaveQuizData;
     private Dictionary<int,QuizData> quizDict = new Dictionary<int, QuizData>();
-    private int currentQuizId = 99;
+    private int currentQuizId = -1;
     public event Action? OnCorrectAnswer;
     public event Action? OnWrongAnswer;
 
@@ -106,7 +102,7 @@ public class QuizHandler
     {
         quizQuestions = questionCollection;
         quizDict.Clear();
-        
+        currentQuizId = -1;
         foreach (var quizData in quizQuestions.QuizDataCollection)
         {
             quizDict[quizData.QuizId] = quizData;
@@ -117,7 +113,6 @@ public class QuizHandler
     private void LoadSaveQuiz()
     {
         PlayerPrefManager.TryGetString(SaveKeyGlobal.QuizSaveKey,out string saveStringValue);
-        Debug.Log($"[QuizHandler] LoadSaveQuiz saveStringValue: {saveStringValue}".LogColor(new Color(0.93f, 1f, 0.64f)));
         runtimeSaveQuizData  = JsonConvert.DeserializeObject<SavedQuizData>(saveStringValue);
         if (runtimeSaveQuizData == null)
         {
@@ -125,6 +120,7 @@ public class QuizHandler
         }
         foreach (var quizId in runtimeSaveQuizData.finishedQuizId)
         {
+            currentQuizId = quizId;
             quizDict.Remove(quizId);
         }
     }
@@ -132,7 +128,6 @@ public class QuizHandler
     public void SaveQuizData()
     {
         string saveStringValue = JsonConvert.SerializeObject(runtimeSaveQuizData);  
-        Debug.Log($"[QuizHandler] SaveQuizData saveStringValue: {saveStringValue}".LogColor(new Color(0.69f, 1f, 0.98f)));
         PlayerPrefManager.SaveString(SaveKeyGlobal.QuizSaveKey, saveStringValue);
     }
 
@@ -150,14 +145,20 @@ public class QuizHandler
     {
         if (quizDict.Count <= 0)
         {
-            // Debug.LogError($"[QuizHandler] GetNextQuestion() quizDict count 0 rejected".LogColor(Color.red));
             return null;
         }
 
-        var (quizId, nextQuestion) = quizDict.First();
-        currentQuizId = quizId;
+        int nextQuizId = currentQuizId + 1;
+        bool gotQuestion = quizDict.TryGetValue(nextQuizId, out var nextQuestion);
+
+        if (!gotQuestion)
+        {
+            return null;
+        }
+        
+        currentQuizId = nextQuizId;
         var quizDetail = new QuizPopupDetail(
-            headerText: "เลือกข้อที่ถูก",
+            headerText: "Pick the right answer", //Should've been localized
             contentText: nextQuestion.Question,
             answerOne: nextQuestion.Choices[0],
             answerTwo: nextQuestion.Choices[1],

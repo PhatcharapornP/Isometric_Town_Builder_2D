@@ -69,11 +69,8 @@ public class GameplayCanvas : MonoBehaviour
     
     public void EnableExitDestroyMode(bool enable)
     {
-        Debug.Log($"[GameplayCanvas] EnableExitDestroyMode {enable}".LogColor(Color.orangeRed),exitDestroyModeButton.gameObject);
         exitDestroyModeButton.gameObject.SetActive(enable);
     }
-
-   
     
     public void SetMidScreenText(string text)
     {

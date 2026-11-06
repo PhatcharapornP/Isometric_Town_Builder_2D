@@ -51,7 +51,8 @@ public class BuildingObjectSelecter : MonoBehaviour
                                       && gameStateManager != null
                                       && playerInput != null
                                       && gameplayUI != null
-                                      && gameplayUI.BuildingOptionPanel != null);
+                                      && gameplayUI.BuildingOptionPanel != null
+        );
 
         if (playerInput != null)
         {
@@ -77,20 +78,17 @@ public class BuildingObjectSelecter : MonoBehaviour
         //TODO: Flip the build obj
         if (selectingObject == null)
         {
-            // Debug.Log($"[BuildObjSelecter]  {GetType().Name}.OnFlip() rejected selectObject null".LogColor(Color.red));
             return;
         }
 
         selectingObject.SetFlipSpriteRenderer(!selectingObject.RuntimeBuildData.FlipValue);
-        // Debug.Log($"[BuildObjSelecter]  {GetType().Name}.OnFlip() to: {selectingObject.RuntimeBuildData.FlipValue}".LogColor(Color.greenYellow));
         
-        //don't like this at all, need to refactor this and open for anyone to sub self according to one place again.
+        //don't like this at all, need to refactor this to be open for anyone to sub self according to one place again.
         OnSelectedObjFlip?.Invoke(selectingObject.RuntimeBuildData.FlipValue);
     }
 
     private void OnBuildCancel()
     {
-        // Debug.Log($"[BuildObjSelecter]  {GetType().Name}.OnBuildCancel()");
         OnCancelBuildAction?.Invoke();
         
         gameplayUI.BuildingOptionPanel.EnableOptionPanel(false);
@@ -100,12 +98,12 @@ public class BuildingObjectSelecter : MonoBehaviour
             return;
         }
         
-        //TODO: or destroy the buildingobj
+        //fallback or destroy the buildingobj
         if (!selectingObject.HasBeenBuilt)
         {
             Destroy(selectingObject.gameObject);
         }
-        else //TODO: Reset build object to previous pos
+        else
         {
             selectingObject.SetBuilt(true);
             selectingObject.SetFlipSpriteRenderer(selectingObject.BuildData.FlipValue);
@@ -114,6 +112,13 @@ public class BuildingObjectSelecter : MonoBehaviour
             selectingObject.ClearRunTimeData();
             var interactionBlocker = selectingObject.gameObject.AddComponent<BuildingInteractionBlocker>();
             interactionBlocker.StartTimer().Forget();
+            
+            if (selectingObject.CellType.HasFlag(CellType.Station))
+            {
+                boardRuleChecker.AddToBuiltStationId(selectingObject.BuildingId);    
+            }
+            
+            selectingObject.OverwriteOldBuildDataWithNewOne(selectingObject.BuildData);
         }
         
         ResetBuildStateToIdle();
@@ -133,7 +138,6 @@ public class BuildingObjectSelecter : MonoBehaviour
             return;
         }
 
-        // Debug.Log($"[BuildObjSelecter]  {GetType().Name}.OnBuildAccept() buildable: {tilemapManager.IsCurrentSpotBuildable}".LogColor(new Color(1f, 0.48f, 0.09f)));
         if (!tilemapManager.IsCurrentSpotBuildable)
         {
             OnAcceptBuildFailedAction?.Invoke();
@@ -143,7 +147,7 @@ public class BuildingObjectSelecter : MonoBehaviour
         OnAcceptBuildAction?.Invoke();
         gameplayUI.BuildingOptionPanel.EnableOptionPanel(false);
 
-        if (!selectingObject.HasBeenBuilt && selectingObject.CellType.HasFlag(CellType.Station))
+        if (selectingObject.CellType.HasFlag(CellType.Station))
         {
             boardRuleChecker.AddToBuiltStationId(selectingObject.BuildingId);    
         }
@@ -164,6 +168,7 @@ public class BuildingObjectSelecter : MonoBehaviour
         
         var interactionBlocker = selectingObject.gameObject.AddComponent<BuildingInteractionBlocker>();
         interactionBlocker.StartTimer().Forget();
+        
         ResetBuildStateToIdle();
         tilemapManager.ResetTilePosAndNeighbourToDefaultColor();
     }
@@ -172,7 +177,6 @@ public class BuildingObjectSelecter : MonoBehaviour
     {
         selectingObject = null;
         gameStateManager?.GoToState(GameStateType.Idle);
-        Debug.Log($"[BuildObjSelecter] {GetType().Name}.ResetBuildStateToIdle()");
     }
 
     private void WhilePlayerHolding(float holdTimer)
@@ -181,7 +185,7 @@ public class BuildingObjectSelecter : MonoBehaviour
         {
             return;
         }
-        
+
         if (buildingGameState.CurrentBuildState is BuildState.Undefined && holdTimer >= minHoldTimer)
         {
             bool hasBuildingAtScreenPos = CheckForAvailableBuildingToPickup(playerInput.ScreenPos);
@@ -189,38 +193,12 @@ public class BuildingObjectSelecter : MonoBehaviour
             {
                 gameStateManager.GoToState(GameStateType.Building);
                 UpdateBuildState(BuildState.Selecting);
-                Debug.Log($"[BuildObjSelecter] UpdateOnPlayerHolding holdTimer: {holdTimer}".LogColor(Color.greenYellow));
             }
         }
     }
 
     private void OnStartHolding()
     {
-        if (buildingGameState == null)
-        {
-            return;
-        }
-
-        if (playerInput == null)
-        {
-            return;
-        }
-         
-        // if (buildingGameState.CurrentBuildState is BuildState.Undefined)
-        // {
-        //     bool hasBuildingAtScreenPos = CheckForAvailableBuildingToPickup(playerInput.ScreenPos);
-        //     if (!hasBuildingAtScreenPos)
-        //     {
-        //         Debug.Log($"[BuildObjSelecter] {GetType().Name}.OnStartSelecting() | hasBuildingAtScreenPos: false".LogColor(new Color(1f, 0.28f, 0.31f)));
-        //         gameStateManager.GoToState(GameStateType.Idle);
-        //     }
-        //     else
-        //     {
-        //         gameStateManager.GoToState(GameStateType.Building);
-        //         UpdateBuildState(BuildState.Selecting);
-        //         Debug.Log($"[BuildObjSelecter] {GetType().Name}.OnStartSelecting() | UpdateBuildState to Selecting".LogColor(Color.greenYellow));
-        //     }
-        // }
     }
     
     private void OnInputPositionUpdated(Vector3 screenPos)
@@ -315,7 +293,6 @@ public class BuildingObjectSelecter : MonoBehaviour
 
         if (buildingGameState.CurrentBuildState is not BuildState.Selecting)
         {
-            //Debug.Log($"[BuildObjSelecter] OnEndHold CurrentBuildState is not selecting: {buildingGameState.CurrentBuildState} rejected".LogColor(Color.softRed));
             return;
         }
 
@@ -323,7 +300,6 @@ public class BuildingObjectSelecter : MonoBehaviour
 
         if (!gotBuildingObject)
         {
-            Debug.Log($"[BuildObjSelecter] OnEndHold couldn't find any collider 2D rejected".LogColor(Color.softRed));
             return;
         }
         
@@ -339,15 +315,11 @@ public class BuildingObjectSelecter : MonoBehaviour
             
             gameStateManager.GoToState(GameStateType.Building);
             UpdateBuildState(BuildState.HoldingSelectedBuilding);
-            Debug.Log($"[BuildObjSelecter] current holding exceeded check found {selectingObject.name}".LogColor(
-                    Color.greenYellow), selectingObject.transform);
         }
         else
         {
             gameStateManager.GoToState(GameStateType.Idle);
             UpdateBuildState(BuildState.Undefined);
-            
-            Debug.Log($"[BuildObjSelecter] current holding exceeded check found {selectingObject.name} but not building".LogColor(Color.softRed), selectingObject.transform);
         }
     }
 
@@ -381,7 +353,6 @@ public class BuildingObjectSelecter : MonoBehaviour
         if (gameStateManager.CurrentState.StateType is GameStateType.Building 
             && buildingGameState.CurrentBuildState is BuildState.HoldingSelectedBuilding)
         {
-            Debug.Log($"[BuildObjSelecter] {GetType().Name}.OnCancelSelecting() set build state to building...".LogColor(new Color(1f, 0.42f, 0.15f)));
             UpdateBuildState(BuildState.Building);
             gameplayUI.OpenBuildOption();
         }
@@ -407,7 +378,6 @@ public class BuildingObjectSelecter : MonoBehaviour
 
         if (buildingGameState.CurrentBuildState is not BuildState.HoldingSelectedBuilding)
         {
-            Debug.Log($"[BuildObjSelecter] {GetType().Name}.OnInputReleased() screenPos: {screenPos} -> OnCancelSelecting".LogColor(new Color(1f, 0.49f, 0.11f)));
             OnResetHolding();
         }
     }
@@ -417,19 +387,16 @@ public class BuildingObjectSelecter : MonoBehaviour
         bool gotBuildingObject = TryGetBuildingObject(screenPos, out var buildingResult);
         if (!gotBuildingObject)
         {
-            Debug.Log($"[BuildObjSelecter] DestroySelectingBuilding couldn't find any collider 2D rejected".LogColor(Color.softRed));
             return;
         }
 
         if (buildingResult == null )
         {
-            Debug.Log($"[BuildObjSelecter] DestroySelectingBuilding couldn't find buildingResult rejected".LogColor(Color.softRed));
             return;
         }
 
         if (buildingResult.HasBuildingProtector())
         {
-            Debug.Log($"[BuildObjSelecter] DestroySelectingBuilding building {buildingResult.name} has protection rejected".LogColor(Color.softRed));
             return;
         }
         
@@ -443,7 +410,7 @@ public class BuildingObjectSelecter : MonoBehaviour
             boardRuleChecker.RemoveStation(buildingResult.BuildingId);
         }
         
-        //Proceed to destroy this building
+        //Proceed to destroy this building game obj
         Destroy(buildingResult.gameObject);
         
     }
@@ -455,7 +422,6 @@ public class BuildingObjectSelecter : MonoBehaviour
         
         if (resultCollider == null)
         {
-            // Debug.Log($"[BuildObjSelectker] TryGetBuildingOBject couldn't find any collider 2D rejected".LogColor(Color.softRed));
             buildingObjectResult = null;
             return false;
         }
@@ -464,11 +430,7 @@ public class BuildingObjectSelecter : MonoBehaviour
         return true;
     }
 
-    private void UpdateBuildState(BuildState targetBuildState
-#if UNITY_EDITOR
-        , [CallerMemberName] string caller = ""
-#endif
-    )
+    private void UpdateBuildState(BuildState targetBuildState )
     {
         if (gameStateManager == null)
         {
@@ -479,10 +441,6 @@ public class BuildingObjectSelecter : MonoBehaviour
         {
             return;
         }
-
-#if UNITY_EDITOR
-        Debug.Log($"[BuildObjSelecter] {GetType().Name}.UpdateBuildState({targetBuildState}) from: {caller}".LogColor(new Color(1f, 0.83f, 0.27f)));
-#endif  
         
         buildingGameState.ChangeBuildState(targetBuildState);
     }

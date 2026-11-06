@@ -4,14 +4,6 @@ using UnityEngine;
 public class StationTypeTwoInteraction : StationInteraction
 {
     public override StationType StationType => StationType.TypeTwo;
-    // private QuizGameState quizGameState;
-    
-    
-    protected override async UniTask InitializeAsync()
-    {
-        await base.InitializeAsync();
-        // quizGameState = gameStateManager.GetGameStateFromType(GameStateType.Quiz) as QuizGameState;
-    }
     
     public override void OnInputReleased(Vector3 screenPos)
     {
