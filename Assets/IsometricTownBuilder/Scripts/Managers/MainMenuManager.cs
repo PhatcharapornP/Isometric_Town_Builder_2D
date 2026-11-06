@@ -3,17 +3,20 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
+public static class SceneNameKey
+{
+    public const string GameplaySceneName = "BoardGameplay";
+    public const string MainMenuSceneName = "Main";
+}
+
 public class MainMenuManager : MonoBehaviour
 {
     [SerializeField] private MainMenuUIManager uiManager;
-    
-    private const string gameplaySceneName = "BoardGameplay";
-    private const string mainMenuSceneName = "Main";
 
     private void Start()
     {
-        
         uiManager.goToGameplaySceneButton.AddToOnClickAsync(GoToGameplayScene);
+        LoadingCanvas.Instance?.FullScreenLoading.HideLoading();
     }
 
     private void OnDestroy()
@@ -25,8 +28,8 @@ public class MainMenuManager : MonoBehaviour
     {
         LoadingCanvas.Instance?.FullScreenLoading.ShowLoading();
         await LoadSceneUtil.GoToSceneAsync(
-            targetSceneName: gameplaySceneName,
-            unloadSceneName: mainMenuSceneName
+            targetSceneName: SceneNameKey.GameplaySceneName,
+            unloadSceneName: SceneNameKey.MainMenuSceneName
         ).AttachExternalCancellation(ct);
     }
 

@@ -3,7 +3,8 @@ using UnityEngine;
 
 public static class SaveKeyGlobal
 {
-    public const string BuildObjectSaveKey = "";
+    public const string BuildObjectSaveKey = "BdsK";
+    public const string QuizSaveKey = "QsK";
 }
 
 public class SaveLoadManager

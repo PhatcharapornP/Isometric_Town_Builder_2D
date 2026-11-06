@@ -6,6 +6,7 @@ using UnityEngine;
 public class GameplayUIManager : MonoBehaviour
 {
     [SerializeField] private float minHoldingTime = .2f;
+    [SerializeField] private float midScreenTexTimer = .5f;
     
     [field: SerializeField] public bool IsInitialized { get; private set; } = false;
     
@@ -15,6 +16,8 @@ public class GameplayUIManager : MonoBehaviour
     private BuildingGameState? buildingGameState => gameplayManager?.GameStateManager?.GetGameStateFromType(GameStateType.Building) as BuildingGameState;
     
     public BuildingOptionPanel? BuildingOptionPanel { get; private set; }
+
+    public QuizPopup? QuizPopup;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
@@ -27,6 +30,7 @@ public class GameplayUIManager : MonoBehaviour
 
         BuildingOptionPanel = gameplayCanvas.BuildingOptionPanel;
         gameplayCanvas.ExitDestroyModeButton.AddToClickAction(GoToIdleFromDestroyBuildingState);
+        QuizPopup = gameplayCanvas.QuizPopup;
 
         if (playerInput != null)
         {
@@ -207,5 +211,23 @@ public class GameplayUIManager : MonoBehaviour
         Debug.Log($"[GamePlayUI] EnableExitDestroyModeButton {enable} from: {caller}".LogColor(new Color(1f, 0.8f, 0.22f)));
         #endif
         gameplayCanvas.EnableExitDestroyMode(enable);
+    }
+
+    public void EnableQuizPopup(bool enable)
+    {
+        gameplayCanvas.QuizPopup.EnableQuizPopup(enable);
+    }
+
+    public void ShowQuizPopup(QuizPopupDetail detail)
+    {
+        gameplayCanvas.QuizPopup.ShowQuizPopup(detail);
+    }
+    
+    public async UniTask ShowMidScreenText(string text)
+    {
+        gameplayCanvas.SetMidScreenText(text);
+        gameplayCanvas.EnableMidScreenText(true);
+        await UniTask.WaitForSeconds(midScreenTexTimer);
+        gameplayCanvas.EnableMidScreenText(false);
     }
 }

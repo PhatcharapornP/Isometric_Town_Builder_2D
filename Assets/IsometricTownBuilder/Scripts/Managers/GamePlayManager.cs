@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -29,11 +30,13 @@ public class GamePlayManager : MonoBehaviour
     public BoardRuleChecker BoardRuleChecker => boardRuleChecker;
 
     public static GamePlayManager Instance;
+    public bool IsInitialized { get; private set; } = false;
     
 
     private void Start()
     {
         Instance = this;
+        BoardManager.LoadSaveData();
         gameStateManager?.Initialize();
         InitializeAllManagers().Forget();
     }
@@ -54,37 +57,13 @@ public class GamePlayManager : MonoBehaviour
             ruleChecker: boardRuleChecker
         );
         buildingLoader.SpawnSavedBuildingIntoGame();
+        IsInitialized = true;
         await GoToIdleWhenReadyAsync();
     }
 
     private async UniTask GoToIdleWhenReadyAsync()
     {
-        await UniTask.WaitUntil(() => gameStateManager != null && gameStateManager.IsInitialized);
         gameStateManager?.GoToState(GameStateType.Idle);
         LoadingCanvas.Instance?.FullScreenLoading.HideLoading();
     }
-
-#if false
-    //for testing only with out playing only [for now]
-    private void OnValidate()
-    {
-       // if (!boardManager.IsInitialized)
-        {
-            boardManager.SetupRuntimeBoardFromConfig(gameConfigContainer.BoardConfig);
-        }
-
-        placeable = boardManager.TryPlaceCellAt(
-            position: gridPosition,
-            objectSpec: testingPlaceableObj,
-            cellPositionRequire: out cellPositionOutput
-        );
-        
-        //test edit the grid
-        
-        
-        //testing save edited grid into player pref (string)
-        //testing load grid data into runtime cache
-        
-    }
-#endif
 }

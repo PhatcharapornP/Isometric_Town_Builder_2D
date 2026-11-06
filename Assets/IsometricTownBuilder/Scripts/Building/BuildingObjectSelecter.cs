@@ -315,22 +315,9 @@ public class BuildingObjectSelecter : MonoBehaviour
 
         if (buildingGameState.CurrentBuildState is not BuildState.Selecting)
         {
-            Debug.Log($"[BuildObjSelecter] OnEndHold CurrentBuildState is not selecting: {buildingGameState.CurrentBuildState} rejected".LogColor(Color.softRed));
+            //Debug.Log($"[BuildObjSelecter] OnEndHold CurrentBuildState is not selecting: {buildingGameState.CurrentBuildState} rejected".LogColor(Color.softRed));
             return;
         }
-        
-        //do the pick up selected
-        // var world = targetCamera.ScreenToWorldPoint(screenPos);
-        // Collider2D resultCollider = Physics2D.OverlapPoint(world, mask);
-        //
-        // if (resultCollider == null)
-        // {
-        //     Debug.Log($"[BuildObjSelecter] OnEndHold couldn't find any collider 2D rejected".LogColor(Color.softRed));
-        //     
-        //     return;
-        // }
-        //
-        // selectingObject = resultCollider.transform.GetComponent<BuildingObject>();
 
         bool gotBuildingObject = TryGetBuildingObject(screenPos, out selectingObject);
 

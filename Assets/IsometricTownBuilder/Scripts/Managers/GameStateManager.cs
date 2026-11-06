@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -34,6 +35,11 @@ public class GameStateManager : MonoBehaviour
         saving.Initialize();
         loading.Initialize();
         loadingSave.Initialize();
+    }
+
+    private void OnDestroy()
+    {
+        quiz.Exit();
     }
 
     private void SetupGameStateDict()

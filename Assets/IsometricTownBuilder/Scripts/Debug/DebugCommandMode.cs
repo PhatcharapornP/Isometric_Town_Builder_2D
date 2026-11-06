@@ -1,4 +1,6 @@
 #nullable enable
+using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -15,6 +17,8 @@ public class DebugCommandMode : MonoBehaviour
     [SerializeField] private GenericButton savingState;
     [SerializeField] private GenericButton loadingState;
     [SerializeField] private GenericButton loadingSaveState;
+    [SerializeField] private GenericButton deletePlayerPrefs;
+    [SerializeField] private GenericButton reloadGame;
 
     [SerializeField] private GenericButton openDebugButton;
     [SerializeField] private TextMeshProUGUI debugText;
@@ -22,7 +26,6 @@ public class DebugCommandMode : MonoBehaviour
     private bool isDebugPanelShowing => debugPanel.activeInHierarchy;
     private bool isInitialized = false;
 
-//Assets/Resources/GameManager.prefab
     private const string GAME_MANAGER_PATH = "GameManager";
 
     private void Start()
@@ -106,7 +109,22 @@ public class DebugCommandMode : MonoBehaviour
         SetupSavingDebug();
         SetupLoadingState();
         SetupLoadingSaveState();
+        SetupDeletePlayerPrefs();
+        SetupReloadGame();
         isInitialized = true;
+    }
+
+    private void SetupDeletePlayerPrefs()
+    {
+        deletePlayerPrefs.AddToClickAction(DeletePlayerPrefs);
+    }
+
+    private void DeletePlayerPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.DeleteKey(SaveKeyGlobal.QuizSaveKey);
+        PlayerPrefs.DeleteKey(SaveKeyGlobal.BuildObjectSaveKey);
+        PlayerPrefs.Save();
     }
 
     private void SetupIdleDebug()
@@ -163,12 +181,25 @@ public class DebugCommandMode : MonoBehaviour
 
     private void SetupLoadingState()
     {
-        loadingState.AddToClickAction(ReloadGame);
     }
 
-    private void ReloadGame()
+    private void SetupReloadGame()
     {
-        //TODO: reload the gameplay scene
+        reloadGame.AddToOnClickAsync(GoToMain);
+    }
+
+    private void OnDestroy()
+    {
+        reloadGame.RemoveFromOnClickAsync(GoToMain);
+    }
+
+    private async UniTask GoToMain(CancellationToken ct)
+    {
+        LoadingCanvas.Instance?.FullScreenLoading.ShowLoading();
+        await LoadSceneUtil.GoToSceneAsync(
+            targetSceneName: SceneNameKey.MainMenuSceneName,
+            unloadSceneName: SceneNameKey.GameplaySceneName
+        ).AttachExternalCancellation(ct);
     }
 
     private void SetupLoadingSaveState()

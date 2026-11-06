@@ -34,7 +34,7 @@ public class StationTypeThreeInteraction : StationInteraction
             return;
         }
        
-        //TODO: go to building game state + new build state -> destroy   
+        //go to building game state + new build state -> destroy   
         gamePlayManager.GamePlayUI.EnableExitDestroyModeButton(true);
         gameStateManager.GoToState(GameStateType.Building);
         buildingGameState.ChangeBuildState(BuildState.DestroyBuilding);
