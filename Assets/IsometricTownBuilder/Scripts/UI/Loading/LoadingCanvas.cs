@@ -1,7 +1,5 @@
 #nullable enable
-using System;
 using UnityEngine;
-
 
 public class LoadingCanvas : MonoBehaviour
 {
@@ -15,7 +13,15 @@ public class LoadingCanvas : MonoBehaviour
     
     private void Awake()
     {
-        Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;    
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        
         DontDestroyOnLoad(gameObject);
     }
 }

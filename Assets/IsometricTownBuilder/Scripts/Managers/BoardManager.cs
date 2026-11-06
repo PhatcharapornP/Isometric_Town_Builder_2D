@@ -17,18 +17,20 @@ public static class BoardManager
         PlayerPrefManager.TryGetString(SaveKeyGlobal.BuildObjectSaveKey,out string saveStringValue);
         Debug.Log($"[BoardManager] LoadSaveData() -> saveStringValue: {saveStringValue}".LogColor(new Color(1f, 0.63f, 0.92f)));
         var tmpLoadedList  = JsonConvert.DeserializeObject<List<BuildObjectSaveData>>(saveStringValue);
+        buildDataDict.Clear();
+        runtimeOccupiedTiles.Clear();
         if (tmpLoadedList != null)
         {
             foreach (var saveData in tmpLoadedList)
             {
-                buildDataDict.Add(saveData.BuildData.OriginTilePosition, saveData);
+                buildDataDict[saveData.BuildData.OriginTilePosition] = saveData;
                 foreach (var tilePos in saveData.BuildData.BuiltOnTiles)
                 {
                     if (runtimeOccupiedTiles.ContainsKey(tilePos))
                     {
                         continue;
                     }
-                    runtimeOccupiedTiles.Add(tilePos,saveData.BuildingId);    
+                    runtimeOccupiedTiles[tilePos] = saveData.BuildingId;    
                 }
             }
         }
@@ -48,10 +50,10 @@ public static class BoardManager
         buildDataDict[newSaveData.BuildData.OriginTilePosition] = newSaveData;
         runtimeOccupiedTiles.Add(newSaveData.BuildData.OriginTilePosition,buildingId);
         
-        SaveBuildData();
+        SaveBoard();
     }
 
-    private static void SaveBuildData()
+    public static void SaveBoard()
     {
         var buildObjectSaveData = GetBuildObjectSaveData().ToList();
         string saveStringValue = JsonConvert.SerializeObject(buildObjectSaveData);  

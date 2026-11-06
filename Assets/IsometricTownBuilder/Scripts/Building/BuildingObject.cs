@@ -26,6 +26,30 @@ public class BuildingObject : MonoBehaviour
     [field: SerializeField] public BuildObjectRuntimeData RuntimeBuildData { get; private set; } //to be used while building
 
     [field: SerializeField] public BuildObjectRuntimeData BuildData { get; private set; } //loaded / to be fallback to when cancel buliding
+    
+    private BuildingProtector? buildingProtector;
+    private BuildingInteractionBlocker? interactionBlocker;
+    
+    public bool HasBuildingProtector()
+    {
+        if (buildingProtector == null)
+        {
+            buildingProtector = gameObject.GetComponent<BuildingProtector>();
+        }
+        
+        return buildingProtector != null;
+    }
+
+    public bool HasInteractionBlocker()
+    {
+        if (interactionBlocker == null)
+        {
+            interactionBlocker = gameObject.GetComponent<BuildingInteractionBlocker>();
+        }
+        
+        return interactionBlocker != null;
+    }
+
 
     public void SetBuildData(BuildObjectRuntimeData buildData)
     {
@@ -68,7 +92,6 @@ public class BuildingObject : MonoBehaviour
     {
         return RuntimeBuildData.FlipValue ? flipSpec : normalSpec;
     }
-
 
     public void CacheBuildToRuntimeData()
     {

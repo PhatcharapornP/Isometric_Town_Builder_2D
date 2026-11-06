@@ -69,22 +69,20 @@ public class TilemapManager : MonoBehaviour
 
     private void OnFlip(bool flipped)
     {
-        Debug.Log($"[TileMap] {GetType().Name}.OnFlip -> flipped: {flipped}".LogColor(new Color(1f, 0.7f, 0.61f)));
-        //TODO: Update runtime data
+        // Debug.Log($"[TileMap] {GetType().Name}.OnFlip -> flipped: {flipped}".LogColor(new Color(1f, 0.7f, 0.61f)));
         TilePos = buildObjSelecter.SelectedObject.RuntimeBuildData.GetVector3OriginTile();
         GetNewBuildSpecTilesAndColorThem(TilePos, buildObjSelecter.SelectedObject);
     }
 
     private void OnBuildCancel()
     {
-        Debug.Log($"[TileMap] {GetType().Name}.OnBuildCancel".LogColor(new Color(1f, 0.19f, 0.38f)));
+        // Debug.Log($"[TileMap] {GetType().Name}.OnBuildCancel".LogColor(new Color(1f, 0.19f, 0.38f)));
         ResetTilePosAndNeighbourToDefaultColor();
     }
 
     private void OnBuildAccept()
     {
-        Debug.Log($"[TileMap] {GetType().Name}.OnBuildAccept".LogColor(new Color(0.81f, 1f, 0.36f)));
-        // ResetTilePosAndNeighbourToDefaultColor();
+        // Debug.Log($"[TileMap] {GetType().Name}.OnBuildAccept".LogColor(new Color(0.81f, 1f, 0.36f)));
     }
 
     private void OnInputResetHolding()
@@ -186,13 +184,13 @@ public class TilemapManager : MonoBehaviour
     {
         bool areBuildable = true;
         var tilePosResultList = new List<Vector3Int>();
+        
         foreach (var buildSpec in buildSpecs)
         {
             var checkTilePos = new Vector3Int(origin.x + buildSpec.X, origin.y + buildSpec.Y, origin.z);
             tilePosResultList.Add(checkTilePos);
             if (!buildableTiles.ContainsKey(checkTilePos) && areBuildable)
             {
-                // Debug.LogError($"{GetType().Name}.IsBuildableSpec at pos: {checkTilePos} isn't one of the buildables".LogColor(Color.red));
                 areBuildable = false;
             }
             else
@@ -200,12 +198,10 @@ public class TilemapManager : MonoBehaviour
                 bool gotBuildableTile = buildableTiles.TryGetValue(checkTilePos, out var data);
                 if (gotBuildableTile && data.CellType.HasFlag(buildCellType) == false)
                 {
-                    Debug.Log($"[TileMap] {GetType().Name} buildCellType: {buildCellType} | data: {data.CellType}".LogColor(new Color(0.51f, 0.96f, 1f)));
                     areBuildable = false;
                 }
 
-                //TODO: if able, will refactor this into BoardRuleChecker, check from list of rules that get their own rule comliance implementation
-                
+                //TODO: if able, will refactor this into BoardRuleChecker, check from list of rules that get their own rule compliance implementation
                 //check exceed board rule station's count
                 if (buildCellType.HasFlag(CellType.Station))
                 {

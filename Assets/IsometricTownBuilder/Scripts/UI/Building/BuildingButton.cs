@@ -1,4 +1,3 @@
-
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -25,16 +24,11 @@ public class BuildingButton : GenericButton ,IPointerDownHandler
                                       && gameStateManager != null
                                       && buildObjectSelecter != null
                                       && buildingGameState != null
-                                      && gameplayUIManager != null);
+                                      && gameplayUIManager != null
+        );
 
         buildingCatalogConfig = gameConfigContainer.BuildingCatalogConfig;
-        // AddToClickAction(SpawnBuildableObjectAtMousePosition);
         isInitialized = true;
-    }
-
-    void OnDestroy()
-    {
-        // RemoveFromClickAction(SpawnBuildableObjectAtMousePosition);
     }
 
     private void SpawnBuildableObjectAtMousePosition()
@@ -56,8 +50,6 @@ public class BuildingButton : GenericButton ,IPointerDownHandler
             Debug.LogError($"[BuildButton] {GetType().Name}.SpawnBuildableObjectAtMousePosition() -> building from id: {BuildingId} doesn't has a prefab".LogColor(Color.red));
             return;
         }
-        
-        Debug.Log($"[BuildButton] {GetType().Name}.SpawnBuildableObjectAtMousePosition()".LogColor(new Color(1f, 0.76f, 0.25f)));
         
         var buildingObj = Instantiate(buildingData.Value.buildingPrefab);
         var screenToWorldPos = targetCamera.ScreenToWorldPoint(new Vector3(playerInput.ScreenPos.x, playerInput.ScreenPos.y, 0f));

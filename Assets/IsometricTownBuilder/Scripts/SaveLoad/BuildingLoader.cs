@@ -1,10 +1,6 @@
 using System.Linq;
 using UnityEngine;
 
-
-/// <summary>
-/// will take a look at loaded board data and spawn building into the game
-/// </summary>
 public class BuildingLoader : MonoBehaviour
 {
     //will need building catalogConfig
@@ -27,7 +23,6 @@ public class BuildingLoader : MonoBehaviour
     {
         if (buildingCatalogConfig == null)
         {
-            Debug.LogError("[BuildingLoader] BuildingCatalogConfig is null");
             return;
         }
         var buildDataDict = BoardManager.BuildDataDict;
@@ -35,8 +30,6 @@ public class BuildingLoader : MonoBehaviour
         {
             return;
         }
-
-        Debug.Log($"[BuildingLoader] buildDataDict count: {buildDataDict.Count}".LogColor(new Color(0.74f, 1f, 0.4f)));    
         
         foreach (var (tilePos, buildData) in buildDataDict)
         {
@@ -62,12 +55,8 @@ public class BuildingLoader : MonoBehaviour
             buildingObj.SnapToTilePosition(tileWorldPos);
             if (buildingObj.CellType.HasFlag(CellType.Station))
             {
-                boardRuleChecker.IncreaseStationCount(1);
                 boardRuleChecker.AddToBuiltStationId(buildingObj.BuildingId);
             }
-            
-            
-            Debug.Log($"[BuildingLoader] spawned {buildingObj.name}".LogColor(new Color(0.74f, 1f, 0.4f)),buildingObj.gameObject);
         }
     }
 }

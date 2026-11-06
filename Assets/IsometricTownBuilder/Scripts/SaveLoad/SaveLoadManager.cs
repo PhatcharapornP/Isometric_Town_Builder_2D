@@ -3,22 +3,17 @@ using UnityEngine;
 
 public static class SaveKeyGlobal
 {
-    public const string BuildObjectSaveKey = "";
+    public const string BuildObjectSaveKey = "BdsK";
+    public const string QuizSaveKey = "QsK";
 }
 
-public class SaveLoadManager
+public class SaveLoadManager //each system are handle their own save and load, must be refactor to here for easier maintainance
 {
-    //TODO: Need to load and supply save data to the games
-
-    
-    //TODO: set as void for now until can figure it out how to supply data to game
     public void LoadGameSave()
     {
-        //grid states (id,position,type, OccupyData, undefined etc.) -> OccupyData (uid,PlaceableObjectType,rotation) 
     }
 
     public void SaveGame()
     {
-        
     }
 }

@@ -1,5 +1,6 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,12 +11,19 @@ public class GameplayCanvas : MonoBehaviour
     [SerializeField] private BuildingOptionPanel buildingOptionPanel;
     [SerializeField] private BuildCatalogPanel buildCatalogPanel;
     [SerializeField] private Image holdingImage;
+    [SerializeField] private GenericButton exitDestroyModeButton;
+    [SerializeField] private QuizPopup quizPopup;
+    [SerializeField] private TextMeshProUGUI midScreenText;
+    
     [field: SerializeField] public bool IsInitialized { get; private set; } = false;
     private GameplayUIManager gameplayUIManager => GamePlayManager.Instance.GamePlayUI;
     private Camera targetCamera => Camera.main;
     public BuildingOptionPanel BuildingOptionPanel => buildingOptionPanel;
     public  BuildCatalogPanel BuildCatalogPanel => buildCatalogPanel;
-
+    public GenericButton ExitDestroyModeButton => exitDestroyModeButton;
+    
+    public QuizPopup QuizPopup => quizPopup;
+    
     private void Start()
     {
         Initialize().Forget();
@@ -59,4 +67,18 @@ public class GameplayCanvas : MonoBehaviour
         }
     }
     
+    public void EnableExitDestroyMode(bool enable)
+    {
+        exitDestroyModeButton.gameObject.SetActive(enable);
+    }
+    
+    public void SetMidScreenText(string text)
+    {
+        midScreenText.SetText(text);
+    }
+
+    public void EnableMidScreenText(bool enable)
+    {
+        midScreenText.gameObject.SetActive(enable);
+    }
 }

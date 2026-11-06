@@ -36,6 +36,11 @@ public class GameStateManager : MonoBehaviour
         loadingSave.Initialize();
     }
 
+    private void OnDestroy()
+    {
+        quiz.Exit();
+    }
+
     private void SetupGameStateDict()
     {
         gameStateDict.Add(GameStateType.Idle, idle);
@@ -47,12 +52,7 @@ public class GameStateManager : MonoBehaviour
         gameStateDict.Add(GameStateType.LoadingSave, loadingSave);
     }
 
-    public void GoToState(GameStateType goToState
-    #if UNITY_EDITOR
-        ,[CallerMemberName] string caller = ""
-    #endif
-    
-    )
+    public void GoToState(GameStateType goToState)
     {
         if (currentState != null)
         {
@@ -60,26 +60,18 @@ public class GameStateManager : MonoBehaviour
             {
                 return;
             }
-            
+
             currentState.Exit();
         }
-        
-#if UNITY_EDITOR
-        Debug.Log($"[GameStateManager] {GetType().Name}.GoToState({goToState.ToString()}) from: {caller}".LogColor(new Color(1f, 0.87f, 0.46f)));
-#endif
 
         currentState = GetGameStateFromType(goToState);
         if (currentState == null)
         {
             //Go to idle
             currentState = idle;
-            Debug.LogError($"[GameStateManager] {GetType().Name}.EnterState() called with {goToState.ToString()} but no current state exists."
-                    .LogColor(Color.red));
         }
 
         currentState.Enter();
-        
-       
     }
 
     public IGameState? GetGameStateFromType(GameStateType targetState)

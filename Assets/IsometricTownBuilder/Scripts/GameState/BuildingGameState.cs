@@ -4,18 +4,13 @@ public class BuildingGameState : BaseGameState
     public BuildState CurrentBuildState { get; private set; } =  BuildState.Undefined;
     public override void Initialize()
     {
-        //nothing yet
     }
 
     public override void Enter()
     {
     }
 
-    public void ChangeBuildState(BuildState buildState
-// #if UNITY_EDITOR
-//         ,[CallerMemberName] string caller = ""
-// #endif
-    )
+    public void ChangeBuildState(BuildState buildState)
     {
         if (CurrentBuildState == buildState)
         {
@@ -23,14 +18,11 @@ public class BuildingGameState : BaseGameState
         }
 
         CurrentBuildState = buildState;
-// #if UNITY_EDITOR
-//         Debug.Log($"{GetType().Name}.ChangeBuildState({buildState}) from: {caller}".LogColor(Color.yellowGreen));
-// #endif
-        
     }
 
     public override void Exit()
     {
+        ChangeBuildState(BuildState.Undefined);
     }
 }
 
@@ -41,4 +33,5 @@ public enum BuildState
     Selecting,
     Building,
     HoldingSelectedBuilding,
+    DestroyBuilding,
 }

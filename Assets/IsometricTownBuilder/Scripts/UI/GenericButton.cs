@@ -1,7 +1,6 @@
 #nullable enable
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Linq;
@@ -65,7 +64,6 @@ public class GenericButton : MonoBehaviour
             return;
         }
 
-        // Debug.Log($"{GetType().Name}.OnButtonClicked() {gameObject.name} ClickedAction null?: {clickedAction == null}".LogColor(Color.forestGreen), gameObject);
         clickedAction?.Invoke();
         PlaySfx();
     }
@@ -73,14 +71,11 @@ public class GenericButton : MonoBehaviour
     public void AddToClickAction(Action action)
     {
         clickedAction += action;
-        // Debug.Log($"{GetType().Name}.AddToClickAction() {gameObject.name} ClickedAction null?: {clickedAction == null}".LogColor(Color.bisque), gameObject);
     }
 
     public void RemoveFromClickAction(Action action)
     {
-        
         clickedAction -= action;
-        // Debug.Log($"{GetType().Name}.RemoveFromClickAction() {gameObject.name} ClickedAction null?: {clickedAction == null}".LogColor(Color.softRed), gameObject);
     }
     
     public void AddToOnClickAsync(Func<CancellationToken, UniTask> onClickAsync)
@@ -105,15 +100,10 @@ public class GenericButton : MonoBehaviour
         }
     }
 
-    public void ClearCallback(
-#if UNITY_EDITOR
-        [CallerMemberName] string caller = ""
-#endif
-        )
+    public void ClearCallback()
     {
         clickedAction = null;
         onClickAsync = null;
-        
     }
 
     private bool TryPassRapidClickGate()
