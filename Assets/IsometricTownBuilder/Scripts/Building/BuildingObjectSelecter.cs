@@ -11,6 +11,7 @@ public class BuildingObjectSelecter : MonoBehaviour
     private PlayerInputHandler? playerInput => GamePlayManager.Instance.PlayerInput;
     private GameplayUIManager? gameplayUI => GamePlayManager.Instance.GamePlayUI;
     private TilemapManager? tilemapManager => GamePlayManager.Instance.TilemapManager;
+    private BoardRuleChecker boardRuleChecker => GamePlayManager.Instance.BoardRuleChecker;
     private BuildingGameState? buildingGameState => gameStateManager?.GetGameStateFromType(GameStateType.Building) as BuildingGameState;
 
     private Camera? targetCamera => Camera.main;
@@ -148,6 +149,13 @@ public class BuildingObjectSelecter : MonoBehaviour
         
         OnAcceptBuildAction?.Invoke();
         gameplayUI.BuildingOptionPanel.EnableOptionPanel(false);
+
+        if (!selectingObject.HasBeenBuilt && selectingObject.CellType.HasFlag(CellType.Station))
+        {
+            boardRuleChecker.IncreaseStationCount(1);
+            boardRuleChecker.AddToBuiltStationId(selectingObject.BuildingId);    
+        }
+        
         selectingObject.SetBuilt(true);
 
         var newBuildData = new BuildObjectRuntimeData(
@@ -161,6 +169,8 @@ public class BuildingObjectSelecter : MonoBehaviour
         var tileWorldPos = tilemapManager.GetTileWorldPosition(selectingObject.RuntimeBuildData.GetVector3OriginTile());
         selectingObject.SnapToTilePosition(tileWorldPos);
         selectingObject.ClearRunTimeData();
+        
+        
         ResetBuildStateToIdle();
         tilemapManager.ResetTilePosAndNeighbourToDefaultColor();
     }

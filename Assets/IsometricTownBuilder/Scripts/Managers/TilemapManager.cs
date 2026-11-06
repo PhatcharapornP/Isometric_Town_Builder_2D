@@ -164,6 +164,7 @@ public class TilemapManager : MonoBehaviour
             origin: tilePos,
             buildSpecs: selectedBuilding.GetBuildSpecs(),
             buildCellType: selectedBuilding.CellType,
+            buildingId: selectedBuilding.BuildingId,
             tilePosResult: out var tilePosResult
         );
         allTilePosList = tilePosResult.ToList();
@@ -179,6 +180,7 @@ public class TilemapManager : MonoBehaviour
         Vector3Int origin,
         IEnumerable<BuildSpec> buildSpecs,
         CellType buildCellType,
+        int buildingId,
         out IEnumerable<Vector3Int> tilePosResult
     )
     {
@@ -207,7 +209,7 @@ public class TilemapManager : MonoBehaviour
                 //check exceed board rule station's count
                 if (buildCellType.HasFlag(CellType.Station))
                 {
-                    if (!gamePlayManager.BoardRuleChecker.StillAbleToAffordStationCount())
+                    if (!gamePlayManager.BoardRuleChecker.CanBuildStation(buildingId))
                     {
                         areBuildable = false;
                     }

@@ -1,10 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "BoardRuleConfig", menuName = "Scriptable Objects/BoardRuleConfig")]
 public class BoardRuleConfig : ScriptableObject
 {
     [field: SerializeField] public int StationLimit { get; private set; }= 3;
-    
+    [field: SerializeField] public bool CanBuildSameStation { get; private set; } = false;
     
 }
 
@@ -15,14 +16,14 @@ public class BoardRuleChecker
 {
     private BoardRuleConfig ruleConfig;
     private int stationCount;
-    
+    private List<int> stationId = new List<int>();
     
     public BoardRuleChecker(BoardRuleConfig config)
     {
         ruleConfig = config;
     }
 
-    public bool StillAbleToAffordStationCount()
+    private  bool StillAbleToAffordStationCount()
     {
         bool able = stationCount < ruleConfig.StationLimit;
         // Debug.Log($"[BoardRuleChecker] StillAbleToAffordStationCount: stationCount {stationCount} | able?: {able}");
@@ -38,6 +39,23 @@ public class BoardRuleChecker
         }
         // Debug.Log($"[BoardRuleChecker] stationCount {stationCount}");
     }
-    
-    
+
+    public void AddToBuiltStationId(int buildingId)
+    {
+        stationId.Add(buildingId);
+    }
+
+    public bool CanBuildStation(int buildingId)
+    {
+        bool stationAffordable = StillAbleToAffordStationCount();
+        
+        if (ruleConfig.CanBuildSameStation)
+        {
+            return stationAffordable;
+        }
+        else
+        {
+            return  stationId.Contains(buildingId) == false && stationAffordable;
+        }
+    }
 }
