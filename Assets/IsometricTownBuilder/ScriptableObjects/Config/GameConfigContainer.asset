@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 134ad3a9a59760442b4db429f962e563, type: 3}
+  m_Name: GameConfigContainer
+  m_EditorClassIdentifier: Assembly-CSharp::GameConfigContainer
+  boardConfig: {fileID: 11400000, guid: 72ac87938fd15ec49959dc8824efb725, type: 2}
+  buildingCatalogConfig: {fileID: 11400000, guid: 2d764b0d281a54948b35c58e122a63f5, type: 2}
+  boardRuleConfig: {fileID: 11400000, guid: 41334e4050253c94399da1ac69137ab6, type: 2}
+  quizQuestions: {fileID: 11400000, guid: 8e312529f159bff47821d22dcd0d8f88, type: 2}
