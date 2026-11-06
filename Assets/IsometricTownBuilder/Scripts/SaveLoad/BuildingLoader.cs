@@ -62,7 +62,6 @@ public class BuildingLoader : MonoBehaviour
             buildingObj.SnapToTilePosition(tileWorldPos);
             if (buildingObj.CellType.HasFlag(CellType.Station))
             {
-                boardRuleChecker.IncreaseStationCount(1);
                 boardRuleChecker.AddToBuiltStationId(buildingObj.BuildingId);
             }
             

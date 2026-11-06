@@ -1,6 +1,7 @@
 #nullable enable
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Canvas))]
@@ -10,12 +11,14 @@ public class GameplayCanvas : MonoBehaviour
     [SerializeField] private BuildingOptionPanel buildingOptionPanel;
     [SerializeField] private BuildCatalogPanel buildCatalogPanel;
     [SerializeField] private Image holdingImage;
+    [SerializeField] private GenericButton exitDestroyModeButton;
     [field: SerializeField] public bool IsInitialized { get; private set; } = false;
     private GameplayUIManager gameplayUIManager => GamePlayManager.Instance.GamePlayUI;
     private Camera targetCamera => Camera.main;
     public BuildingOptionPanel BuildingOptionPanel => buildingOptionPanel;
     public  BuildCatalogPanel BuildCatalogPanel => buildCatalogPanel;
-
+    public GenericButton ExitDestroyModeButton => exitDestroyModeButton;
+    
     private void Start()
     {
         Initialize().Forget();
@@ -57,6 +60,12 @@ public class GameplayCanvas : MonoBehaviour
         {
             holdingImage.transform.position = worldPos;
         }
+    }
+    
+    public void EnableExitDestroyMode(bool enable)
+    {
+        Debug.Log($"[GameplayCanvas] EnableExitDestroyMode {enable}".LogColor(Color.orangeRed),exitDestroyModeButton.gameObject);
+        exitDestroyModeButton.gameObject.SetActive(enable);
     }
     
 }

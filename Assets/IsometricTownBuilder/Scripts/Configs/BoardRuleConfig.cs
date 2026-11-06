@@ -15,8 +15,7 @@ public class BoardRuleConfig : ScriptableObject
 public class BoardRuleChecker
 {
     private BoardRuleConfig ruleConfig;
-    private int stationCount;
-    private List<int> stationId = new List<int>();
+    private List<int> stationIdList = new List<int>();
     
     public BoardRuleChecker(BoardRuleConfig config)
     {
@@ -25,24 +24,14 @@ public class BoardRuleChecker
 
     private  bool StillAbleToAffordStationCount()
     {
-        bool able = stationCount < ruleConfig.StationLimit;
-        // Debug.Log($"[BoardRuleChecker] StillAbleToAffordStationCount: stationCount {stationCount} | able?: {able}");
+        bool able = stationIdList.Count < ruleConfig.StationLimit;
+        Debug.Log($"[BoardRuleChecker] StillAbleToAffordStationCount: stationCount {stationIdList.Count } | able?: {able}");
         return able;
-    }
-
-    public void IncreaseStationCount(int amount)
-    {
-        stationCount += amount;
-        if (stationCount > ruleConfig.StationLimit)
-        {
-            stationCount = ruleConfig.StationLimit;
-        }
-        // Debug.Log($"[BoardRuleChecker] stationCount {stationCount}");
     }
 
     public void AddToBuiltStationId(int buildingId)
     {
-        stationId.Add(buildingId);
+        stationIdList.Add(buildingId);
     }
 
     public bool CanBuildStation(int buildingId)
@@ -55,7 +44,15 @@ public class BoardRuleChecker
         }
         else
         {
-            return  stationId.Contains(buildingId) == false && stationAffordable;
+            bool containedId = stationIdList.Contains(buildingId);
+            bool canBuildStation = containedId == false && stationAffordable;
+            Debug.Log($"[BoardRuleChecker] StillAbleToAffordStationCount: containedId {containedId} | stationAffordable?: {stationAffordable} \n canBuildStation: {canBuildStation}");
+            return  canBuildStation;
         }
+    }
+
+    public void RemoveStation(int buildingId)
+    {
+        stationIdList.Remove(buildingId);
     }
 }

@@ -61,9 +61,9 @@ public class BuildingOptionPanel : MonoBehaviour
     }
    
     public void EnableOptionPanel(bool enable
-#if UNITY_EDITOR
-    ,[CallerMemberName] string caller = ""
-#endif
+// #if UNITY_EDITOR
+//     ,[CallerMemberName] string caller = ""
+// #endif
     )
     {
         if (gameObject.activeInHierarchy == enable)
@@ -73,9 +73,9 @@ public class BuildingOptionPanel : MonoBehaviour
         
         gameObject.SetActive(enable);
         
-#if UNITY_EDITOR
-        Debug.Log($"[BuildOptions] {GetType().Name}.EnableOptionPanel({enable}) from: {caller}".LogColor(new Color(0.45f, 0.93f, 0.26f)));
-#endif
+// #if UNITY_EDITOR
+//         Debug.Log($"[BuildOptions] {GetType().Name}.EnableOptionPanel({enable}) from: {caller}".LogColor(new Color(0.45f, 0.93f, 0.26f)));
+// #endif
     }
 
     public void SetPanelPositionFromScreenPosition(Vector2 screenPos)

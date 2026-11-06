@@ -48,10 +48,10 @@ public static class BoardManager
         buildDataDict[newSaveData.BuildData.OriginTilePosition] = newSaveData;
         runtimeOccupiedTiles.Add(newSaveData.BuildData.OriginTilePosition,buildingId);
         
-        SaveBuildData();
+        SaveBoard();
     }
 
-    private static void SaveBuildData()
+    public static void SaveBoard()
     {
         var buildObjectSaveData = GetBuildObjectSaveData().ToList();
         string saveStringValue = JsonConvert.SerializeObject(buildObjectSaveData);  

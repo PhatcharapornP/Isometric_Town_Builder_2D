@@ -31,6 +31,7 @@ public class BuildingGameState : BaseGameState
 
     public override void Exit()
     {
+        ChangeBuildState(BuildState.Undefined);
     }
 }
 
@@ -41,4 +42,5 @@ public enum BuildState
     Selecting,
     Building,
     HoldingSelectedBuilding,
+    DestroyBuilding,
 }

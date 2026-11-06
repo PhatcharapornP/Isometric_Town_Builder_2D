@@ -51,7 +51,6 @@ public class GameStateManager : MonoBehaviour
     #if UNITY_EDITOR
         ,[CallerMemberName] string caller = ""
     #endif
-    
     )
     {
         if (currentState != null)
@@ -60,7 +59,7 @@ public class GameStateManager : MonoBehaviour
             {
                 return;
             }
-            
+
             currentState.Exit();
         }
         
@@ -73,13 +72,9 @@ public class GameStateManager : MonoBehaviour
         {
             //Go to idle
             currentState = idle;
-            Debug.LogError($"[GameStateManager] {GetType().Name}.EnterState() called with {goToState.ToString()} but no current state exists."
-                    .LogColor(Color.red));
         }
 
         currentState.Enter();
-        
-       
     }
 
     public IGameState? GetGameStateFromType(GameStateType targetState)

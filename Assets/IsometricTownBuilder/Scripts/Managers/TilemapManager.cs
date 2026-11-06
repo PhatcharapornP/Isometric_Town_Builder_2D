@@ -69,22 +69,20 @@ public class TilemapManager : MonoBehaviour
 
     private void OnFlip(bool flipped)
     {
-        Debug.Log($"[TileMap] {GetType().Name}.OnFlip -> flipped: {flipped}".LogColor(new Color(1f, 0.7f, 0.61f)));
-        //TODO: Update runtime data
+        // Debug.Log($"[TileMap] {GetType().Name}.OnFlip -> flipped: {flipped}".LogColor(new Color(1f, 0.7f, 0.61f)));
         TilePos = buildObjSelecter.SelectedObject.RuntimeBuildData.GetVector3OriginTile();
         GetNewBuildSpecTilesAndColorThem(TilePos, buildObjSelecter.SelectedObject);
     }
 
     private void OnBuildCancel()
     {
-        Debug.Log($"[TileMap] {GetType().Name}.OnBuildCancel".LogColor(new Color(1f, 0.19f, 0.38f)));
+        // Debug.Log($"[TileMap] {GetType().Name}.OnBuildCancel".LogColor(new Color(1f, 0.19f, 0.38f)));
         ResetTilePosAndNeighbourToDefaultColor();
     }
 
     private void OnBuildAccept()
     {
-        Debug.Log($"[TileMap] {GetType().Name}.OnBuildAccept".LogColor(new Color(0.81f, 1f, 0.36f)));
-        // ResetTilePosAndNeighbourToDefaultColor();
+        // Debug.Log($"[TileMap] {GetType().Name}.OnBuildAccept".LogColor(new Color(0.81f, 1f, 0.36f)));
     }
 
     private void OnInputResetHolding()
